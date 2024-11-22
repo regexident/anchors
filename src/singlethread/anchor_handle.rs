@@ -10,7 +10,7 @@ pub struct AnchorHandle {
 }
 
 impl AnchorHandle {
-    pub fn new(key: NodeKey, still_alive: Rc<Cell<bool>>) -> Self {
+    pub(super) fn new(key: NodeKey, still_alive: Rc<Cell<bool>>) -> Self {
         Self { key, still_alive }
     }
 

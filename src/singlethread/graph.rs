@@ -22,7 +22,7 @@ thread_local! {
     static NEXT_TOKEN: Cell<u32> = const { Cell::new(0) };
 }
 
-pub struct Graph {
+pub(super) struct Graph {
     pub(super) nodes: arena::Graph<Node>,
     token: u32,
 

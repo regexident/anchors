@@ -3,7 +3,7 @@ use crate::arena;
 use super::{Graph, Node, NodeGuard, NodeKey, RecalcState};
 
 #[derive(Copy, Clone)]
-pub struct GraphGuard<'gg> {
+pub(super) struct GraphGuard<'gg> {
     nodes: arena::GraphGuard<'gg, Node>,
     graph: &'gg Graph,
 }

@@ -3,7 +3,7 @@ use crate::arena;
 use super::{node::Node, NodeKey, RefCellVecIterator};
 
 #[derive(Copy, Clone, Debug)]
-pub struct NodeGuard<'a>(pub(super) arena::NodeGuard<'a, Node>);
+pub(super) struct NodeGuard<'a>(pub(super) arena::NodeGuard<'a, Node>);
 
 impl<'a> std::ops::Deref for NodeGuard<'a> {
     type Target = Node;
