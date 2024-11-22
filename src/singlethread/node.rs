@@ -4,7 +4,7 @@ use crate::arena;
 
 use super::{generation::Generation, node_ptrs::NodePtrs, AnchorDebugInfo, GenericAnchor};
 
-pub struct Node {
+pub(super) struct Node {
     pub observed: Cell<bool>,
 
     /// Bool used during height incrementing to check for loops

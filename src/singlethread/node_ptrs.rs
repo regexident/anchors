@@ -2,7 +2,7 @@ use std::cell::{Cell, RefCell};
 
 use super::{Graph, NodePtr, RecalcState};
 
-pub struct NodePtrs {
+pub(super) struct NodePtrs {
     /// first parent, remaining parents. unsorted, duplicates may exist
     pub(super) clean_parent0: Cell<Option<NodePtr>>,
     pub(super) clean_parents: RefCell<Vec<NodePtr>>,

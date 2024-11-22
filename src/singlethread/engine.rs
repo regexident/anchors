@@ -63,7 +63,7 @@ impl Engine {
         }
     }
 
-    pub fn with<F: for<'any> FnOnce(GraphGuard<'any>) -> R, R>(&self, f: F) -> R {
+    pub(super) fn with<F: for<'any> FnOnce(GraphGuard<'any>) -> R, R>(&self, f: F) -> R {
         self.graph.with(f)
     }
 
