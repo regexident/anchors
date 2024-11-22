@@ -26,12 +26,12 @@ mod node_key;
 mod node_ptrs;
 mod var;
 
-pub use self::{
-    anchor_handle::*, engine::*, graph::*, graph_guard::*, node::*, node_guard::*, node_key::*,
-    node_ptrs::*, var::*,
-};
+pub use self::{anchor_handle::*, engine::*, node_key::*, var::*};
 
-use self::{anchor::*, context::*, context_mut::*, generation::*, node_iterator::*};
+use self::{
+    anchor::*, context::*, context_mut::*, generation::*, graph::*, graph_guard::*, node::*,
+    node_guard::*, node_iterator::*, node_ptrs::*,
+};
 
 /// The main struct of the Anchors library. Represents a single value on the `singlethread` recomputation graph.
 ///
