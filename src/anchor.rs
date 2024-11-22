@@ -2,6 +2,10 @@ use std::marker::PhantomData;
 
 use crate::core::{AnchorHandle, Constant, Engine};
 
+mod multi;
+
+pub use self::multi::*;
+
 /// The main struct of the Anchors library.
 ///
 /// Represents a single value on the recomputation graph.

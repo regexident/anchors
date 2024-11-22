@@ -3,9 +3,19 @@ use std::panic::Location;
 use crate::core::{Anchor, AnchorCore, Engine, OutputContext, Poll, UpdateContext};
 
 pub struct RefMap<A, F> {
-    pub(super) f: F,
     pub(super) anchors: A,
+    pub(super) f: F,
     pub(super) location: &'static Location<'static>,
+}
+
+impl<A, F> RefMap<A, F> {
+    pub fn new(anchors: A, f: F, location: &'static Location<'static>) -> Self {
+        Self {
+            anchors,
+            f,
+            location,
+        }
+    }
 }
 
 impl<F, In, Out, E> AnchorCore<E> for RefMap<(Anchor<In, E>,), F>

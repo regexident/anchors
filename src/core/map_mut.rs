@@ -3,11 +3,23 @@ use std::panic::Location;
 use crate::core::{Anchor, AnchorCore, Engine, OutputContext, Poll, UpdateContext};
 
 pub struct MapMut<A, F, Out> {
+    pub(super) anchors: A,
     pub(super) f: F,
+    pub(super) location: &'static Location<'static>,
     pub(super) output: Out,
     pub(super) output_stale: bool,
-    pub(super) anchors: A,
-    pub(super) location: &'static Location<'static>,
+}
+
+impl<A, F, Out> MapMut<A, F, Out> {
+    pub fn new(anchors: A, f: F, location: &'static Location<'static>, initial: Out) -> Self {
+        Self {
+            anchors,
+            f,
+            location,
+            output: initial,
+            output_stale: true,
+        }
+    }
 }
 
 macro_rules! impl_tuple_map_mut {

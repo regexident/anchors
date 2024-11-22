@@ -5,8 +5,6 @@
 
 use std::{cell::RefCell, rc::Rc};
 
-pub use crate::core::MultiAnchor;
-
 mod anchor;
 mod anchor_handle;
 mod context;

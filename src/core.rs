@@ -12,11 +12,10 @@ mod constant;
 mod cutoff;
 mod map;
 mod map_mut;
-mod multi;
 mod refmap;
 mod then;
 
-pub use self::{constant::*, cutoff::*, map::*, map_mut::*, multi::*, refmap::*, then::*};
+pub use self::{constant::*, cutoff::*, map::*, map_mut::*, refmap::*, then::*};
 
 /// Indicates whether a value is ready for reading, and if it is, whether it's changed
 /// since the last read.

@@ -1,4 +1,4 @@
-use anchors::singlethread::*;
+use anchors::{singlethread::*, MultiAnchor as _};
 
 fn main() {
     let mut engine = Engine::new();
