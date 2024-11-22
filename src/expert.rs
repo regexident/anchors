@@ -38,6 +38,7 @@ impl<O, E: Engine> Anchor<O, E> {
     {
         Constant::new_internal(val)
     }
+
     /// Returns the immutable, copyable, hashable, comparable engine-specific ID for this Anchor.
     pub fn token(&self) -> <E::AnchorHandle as AnchorHandle>::Token {
         self.data.token()

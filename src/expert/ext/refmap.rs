@@ -17,9 +17,11 @@ where
     fn dirty(&mut self, _edge: &<E::AnchorHandle as crate::expert::AnchorHandle>::Token) {
         // noop
     }
+
     fn poll_updated<G: UpdateContext<Engine = E>>(&mut self, ctx: &mut G) -> Poll {
         ctx.request(&self.anchors.0, true)
     }
+
     fn output<'slf, 'out, G: OutputContext<'out, Engine = E>>(
         &'slf self,
         ctx: &mut G,

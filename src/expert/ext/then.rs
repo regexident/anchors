@@ -24,6 +24,7 @@ macro_rules! impl_tuple_then {
             E: Engine,
         {
             type Output = Out;
+
             fn dirty(&mut self, edge: &<E::AnchorHandle as AnchorHandle>::Token) {
                 $(
                     // only invalidate f_anchor if one of the lhs anchors is invalidated
@@ -33,6 +34,7 @@ macro_rules! impl_tuple_then {
                     }
                 )+
             }
+
             fn poll_updated<G: UpdateContext<Engine=E>>(
                 &mut self,
                 ctx: &mut G,
@@ -77,6 +79,7 @@ macro_rules! impl_tuple_then {
 
                 ctx.request(&self.f_anchor.as_ref().unwrap(), true)
             }
+
             fn output<'slf, 'out, G: OutputContext<'out, Engine=E>>(
                 &'slf self,
                 ctx: &mut G,

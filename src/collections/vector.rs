@@ -44,6 +44,7 @@ impl<T: 'static + Clone, E: Engine> VectorCollect<T, E> {
 
 impl<T: 'static + Clone, E: Engine> AnchorInner<E> for VectorCollect<T, E> {
     type Output = Vector<T>;
+
     fn dirty(&mut self, _edge: &<E::AnchorHandle as AnchorHandle>::Token) {
         self.vals = None;
     }

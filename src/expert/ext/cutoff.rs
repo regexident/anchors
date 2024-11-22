@@ -19,6 +19,7 @@ where
     fn dirty(&mut self, _edge: &<E::AnchorHandle as AnchorHandle>::Token) {
         // noop
     }
+
     fn poll_updated<G: UpdateContext<Engine = E>>(&mut self, ctx: &mut G) -> Poll {
         let upstream_poll = ctx.request(&self.anchors.0, true);
         if upstream_poll != Poll::Updated {

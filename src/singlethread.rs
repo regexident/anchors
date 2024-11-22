@@ -463,25 +463,32 @@ impl<'eng, 'gg> UpdateContext for EngineContextMut<'eng, 'gg> {
 
 trait GenericAnchor {
     fn dirty(&mut self, child: &NodeKey);
+
     fn poll_updated<'eng, 'gg>(&mut self, ctx: &mut EngineContextMut<'eng, 'gg>) -> Poll;
+
     fn output<'slf, 'out>(&'slf self, ctx: &mut EngineContext<'out>) -> &'out dyn Any
     where
         'slf: 'out;
+
     fn debug_info(&self) -> AnchorDebugInfo;
 }
+
 impl<I: AnchorInner<Engine> + 'static> GenericAnchor for I {
     fn dirty(&mut self, child: &NodeKey) {
         AnchorInner::dirty(self, child)
     }
+
     fn poll_updated<'eng, 'gg>(&mut self, ctx: &mut EngineContextMut<'eng, 'gg>) -> Poll {
         AnchorInner::poll_updated(self, ctx)
     }
+
     fn output<'slf, 'out>(&'slf self, ctx: &mut EngineContext<'out>) -> &'out dyn Any
     where
         'slf: 'out,
     {
         AnchorInner::output(self, ctx)
     }
+
     fn debug_info(&self) -> AnchorDebugInfo {
         AnchorDebugInfo {
             location: self.debug_location(),

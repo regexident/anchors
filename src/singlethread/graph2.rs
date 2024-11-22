@@ -470,7 +470,9 @@ fn set_min_height<'a>(node: NodeGuard<'a>, min_height: usize) -> Result<(), ()> 
     if node.visited.get() {
         return Err(());
     }
+
     node.visited.set(true);
+
     if height(node) < min_height {
         node.ptrs.height.set(min_height);
         let mut did_err = false;
@@ -483,7 +485,9 @@ fn set_min_height<'a>(node: NodeGuard<'a>, min_height: usize) -> Result<(), ()> 
             return Err(());
         }
     }
+
     node.visited.set(false);
+
     Ok(())
 }
 
@@ -491,6 +495,7 @@ fn dequeue_calc<'a>(graph: &Graph2, node: NodeGuard<'a>) {
     if node.ptrs.recalc_state.get() != RecalcState::Pending {
         return;
     }
+
     if let Some(prev) = node.ptrs.prev.get() {
         unsafe { prev.lookup_unchecked() }
             .ptrs
@@ -529,9 +534,11 @@ unsafe fn free(ptr: NodePtr) {
     // TODO add node to chain of free nodes
     let free_head = &graph.free_head;
     let old_free = free_head.get();
+
     if let Some(old_free) = old_free {
         guard.0.lookup_ptr(old_free).ptrs.prev.set(Some(ptr));
     }
+
     guard.ptrs.next.set(old_free);
     free_head.set(Some(ptr));
 
@@ -548,6 +555,7 @@ pub fn needs_recalc<'a>(node: NodeGuard<'a>) {
         // already in recalc queue, or already pending recalc
         return;
     }
+
     node.ptrs.recalc_state.set(RecalcState::Needed);
 }
 
@@ -566,6 +574,7 @@ mod test {
     #[test]
     fn set_edge_updates_correctly() {
         let graph = Graph2::new(256);
+
         graph.with(|guard| {
             let a = guard.insert_testing_guard();
             let b = guard.insert_testing_guard();
@@ -622,6 +631,7 @@ mod test {
     #[test]
     fn height_calculated_correctly() {
         let graph = Graph2::new(256);
+
         graph.with(|guard| {
             let a = guard.insert_testing_guard();
             let b = guard.insert_testing_guard();
@@ -658,6 +668,7 @@ mod test {
     #[test]
     fn cycles_cause_error() {
         let graph = Graph2::new(256);
+
         graph.with(|guard| {
             let b = guard.insert_testing_guard();
             let c = guard.insert_testing_guard();
@@ -670,6 +681,7 @@ mod test {
     #[test]
     fn non_cycles_wont_cause_errors() {
         let graph = Graph2::new(256);
+
         graph.with(|guard| {
             let a = guard.insert_testing_guard();
             let b = guard.insert_testing_guard();
@@ -693,6 +705,7 @@ mod test {
     #[test]
     fn test_insert_pop() {
         let graph = Graph2::new(10);
+
         graph.with(|guard| {
             let a = guard.insert_testing_guard();
             set_min_height(a, 0).unwrap();
@@ -737,6 +750,7 @@ mod test {
     #[should_panic]
     fn test_insert_above_max_height() {
         let graph = Graph2::new(10);
+
         graph.with(|guard| {
             let a = guard.insert_testing_guard();
             set_min_height(a, 10).unwrap();
@@ -747,7 +761,9 @@ mod test {
     #[test]
     fn test_free_list() {
         use crate::expert::AnchorHandle;
+
         let graph = Graph2::new(10);
+
         let a = graph.insert_testing();
         let b = graph.insert_testing();
         let c = graph.insert_testing();
