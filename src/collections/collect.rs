@@ -62,7 +62,7 @@ where
 {
     type Output = C;
 
-    fn dirty(&mut self, _edge: &<E::AnchorHandle as AnchorHandle>::Token) {
+    fn mark_dirty(&mut self, _edge: &<E::AnchorHandle as AnchorHandle>::Token) {
         self.vals = None;
     }
 

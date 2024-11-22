@@ -5,7 +5,7 @@ use crate::expert::{AnchorInner, Poll};
 use super::{Engine, EngineContext, EngineContextMut, NodeKey};
 
 pub(super) trait GenericAnchor {
-    fn dirty(&mut self, child: &NodeKey);
+    fn mark_dirty(&mut self, child: &NodeKey);
 
     fn poll_updated(&mut self, ctx: &mut EngineContextMut<'_, '_>) -> Poll;
 
@@ -20,8 +20,8 @@ impl<I> GenericAnchor for I
 where
     I: 'static + AnchorInner<Engine>,
 {
-    fn dirty(&mut self, child: &NodeKey) {
-        AnchorInner::dirty(self, child)
+    fn mark_dirty(&mut self, child: &NodeKey) {
+        AnchorInner::mark_dirty(self, child)
     }
 
     fn poll_updated(&mut self, ctx: &mut EngineContextMut<'_, '_>) -> Poll {

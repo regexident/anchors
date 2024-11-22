@@ -162,7 +162,7 @@ where
     /// Called by the engine to indicate some input may have changed.
     /// If this `AnchorInner` still cares about `child`'s value, it should re-request
     /// it next time `poll_updated` is called.
-    fn dirty(&mut self, child: &<E::AnchorHandle as AnchorHandle>::Token);
+    fn mark_dirty(&mut self, child: &<E::AnchorHandle as AnchorHandle>::Token);
 
     /// Called by the engine when it wants to know if this value has changed or
     /// not. If some requested value from `ctx` is `Pending`, this method should
