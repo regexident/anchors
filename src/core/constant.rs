@@ -1,6 +1,6 @@
 use std::panic::Location;
 
-use crate::core::{Anchor, AnchorHandle, AnchorInner, Engine, OutputContext, Poll, UpdateContext};
+use crate::core::{Anchor, AnchorHandle, AnchorCore, Engine, OutputContext, Poll, UpdateContext};
 
 /// An Anchor type for immutable values.
 pub struct Constant<T> {
@@ -44,7 +44,7 @@ where
     }
 }
 
-impl<T, E> AnchorInner<E> for Constant<T>
+impl<T, E> AnchorCore<E> for Constant<T>
 where
     T: 'static,
     E: Engine,

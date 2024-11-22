@@ -1,6 +1,6 @@
 use std::panic::Location;
 
-use super::{Anchor, AnchorInner, Engine};
+use super::{Anchor, AnchorCore, Engine};
 
 /// A trait automatically implemented for tuples of Anchors.
 ///
@@ -16,31 +16,31 @@ pub trait MultiAnchor<E: Engine>: Sized {
     where
         Out: 'static,
         F: 'static,
-        super::Map<Self::Target, F, Out>: AnchorInner<E, Output = Out>;
+        super::Map<Self::Target, F, Out>: AnchorCore<E, Output = Out>;
 
     fn map_mut<F, Out>(self, initial: Out, f: F) -> Anchor<Out, E>
     where
         Out: 'static,
         F: 'static,
-        super::MapMut<Self::Target, F, Out>: AnchorInner<E, Output = Out>;
+        super::MapMut<Self::Target, F, Out>: AnchorCore<E, Output = Out>;
 
     fn then<F, Out>(self, f: F) -> Anchor<Out, E>
     where
         F: 'static,
         Out: 'static,
-        super::Then<Self::Target, Out, F, E>: AnchorInner<E, Output = Out>;
+        super::Then<Self::Target, Out, F, E>: AnchorCore<E, Output = Out>;
 
     fn cutoff<F, Out>(self, _f: F) -> Anchor<Out, E>
     where
         Out: 'static,
         F: 'static,
-        super::Cutoff<Self::Target, F>: AnchorInner<E, Output = Out>;
+        super::Cutoff<Self::Target, F>: AnchorCore<E, Output = Out>;
 
     fn refmap<F, Out>(self, _f: F) -> Anchor<Out, E>
     where
         Out: 'static,
         F: 'static,
-        super::RefMap<Self::Target, F>: AnchorInner<E, Output = Out>;
+        super::RefMap<Self::Target, F>: AnchorCore<E, Output = Out>;
 }
 
 impl<O1, E> Anchor<O1, E>
@@ -72,7 +72,7 @@ where
     where
         Out: 'static,
         F: 'static,
-        super::Map<(Anchor<O1, E>,), F, Out>: AnchorInner<E, Output = Out>,
+        super::Map<(Anchor<O1, E>,), F, Out>: AnchorCore<E, Output = Out>,
     {
         E::mount(super::Map {
             anchors: (self.clone(),),
@@ -88,7 +88,7 @@ where
     where
         Out: 'static,
         F: 'static,
-        super::MapMut<(Anchor<O1, E>,), F, Out>: AnchorInner<E, Output = Out>,
+        super::MapMut<(Anchor<O1, E>,), F, Out>: AnchorCore<E, Output = Out>,
     {
         E::mount(super::MapMut {
             anchors: (self.clone(),),
@@ -134,7 +134,7 @@ where
     where
         F: 'static,
         Out: 'static,
-        super::Then<(Anchor<O1, E>,), Out, F, E>: AnchorInner<E, Output = Out>,
+        super::Then<(Anchor<O1, E>,), Out, F, E>: AnchorCore<E, Output = Out>,
     {
         E::mount(super::Then {
             anchors: (self.clone(),),
@@ -177,7 +177,7 @@ where
     where
         Out: 'static,
         F: 'static,
-        super::RefMap<(Anchor<O1, E>,), F>: AnchorInner<E, Output = Out>,
+        super::RefMap<(Anchor<O1, E>,), F>: AnchorCore<E, Output = Out>,
     {
         E::mount(super::RefMap {
             anchors: (self.clone(),),
@@ -228,7 +228,7 @@ where
     where
         Out: 'static,
         F: 'static,
-        super::Cutoff<(Anchor<O1, E>,), F>: AnchorInner<E, Output = Out>,
+        super::Cutoff<(Anchor<O1, E>,), F>: AnchorCore<E, Output = Out>,
     {
         E::mount(super::Cutoff {
             anchors: (self.clone(),),
@@ -268,7 +268,7 @@ macro_rules! impl_tuple_ext {
             where
                 Out: 'static,
                 F: 'static,
-                super::Map<Self::Target, F, Out>: AnchorInner<E, Output=Out>,
+                super::Map<Self::Target, F, Out>: AnchorCore<E, Output=Out>,
             {
                 E::mount(super::Map {
                     anchors: ($(self.$num.clone(),)+),
@@ -284,7 +284,7 @@ macro_rules! impl_tuple_ext {
             where
                 Out: 'static,
                 F: 'static,
-                super::MapMut<Self::Target, F, Out>: AnchorInner<E, Output=Out>,
+                super::MapMut<Self::Target, F, Out>: AnchorCore<E, Output=Out>,
             {
                 E::mount(super::MapMut {
                     anchors: ($(self.$num.clone(),)+),
@@ -300,7 +300,7 @@ macro_rules! impl_tuple_ext {
             where
                 F: 'static,
                 Out: 'static,
-                super::Then<Self::Target, Out, F, E>: AnchorInner<E, Output=Out>,
+                super::Then<Self::Target, Out, F, E>: AnchorCore<E, Output=Out>,
             {
                 E::mount(super::Then {
                     anchors: ($(self.$num.clone(),)+),
@@ -316,7 +316,7 @@ macro_rules! impl_tuple_ext {
             where
                 Out: 'static,
                 F: 'static,
-                super::RefMap<Self::Target, F>: AnchorInner<E, Output = Out>,
+                super::RefMap<Self::Target, F>: AnchorCore<E, Output = Out>,
             {
                 E::mount(super::RefMap {
                     anchors: ($(self.$num.clone(),)+),
@@ -330,7 +330,7 @@ macro_rules! impl_tuple_ext {
             where
                 Out: 'static,
                 F: 'static,
-                super::Cutoff<Self::Target, F>: AnchorInner<E, Output = Out>,
+                super::Cutoff<Self::Target, F>: AnchorCore<E, Output = Out>,
             {
                 E::mount(super::Cutoff {
                     anchors: ($(self.$num.clone(),)+),

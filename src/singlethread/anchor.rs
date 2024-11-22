@@ -1,6 +1,6 @@
 use std::{any::Any, panic::Location};
 
-use crate::core::{AnchorInner, Poll};
+use crate::core::{AnchorCore, Poll};
 
 use super::{Engine, EngineContext, EngineContextMut, NodeKey};
 
@@ -18,21 +18,21 @@ pub(super) trait GenericAnchor {
 
 impl<I> GenericAnchor for I
 where
-    I: 'static + AnchorInner<Engine>,
+    I: 'static + AnchorCore<Engine>,
 {
     fn mark_dirty(&mut self, child: &NodeKey) {
-        AnchorInner::mark_dirty(self, child)
+        AnchorCore::mark_dirty(self, child)
     }
 
     fn poll_updated(&mut self, ctx: &mut EngineContextMut<'_, '_>) -> Poll {
-        AnchorInner::poll_updated(self, ctx)
+        AnchorCore::poll_updated(self, ctx)
     }
 
     fn output<'slf, 'out>(&'slf self, ctx: &mut EngineContext<'out>) -> &'out dyn Any
     where
         'slf: 'out,
     {
-        AnchorInner::output(self, ctx)
+        AnchorCore::output(self, ctx)
     }
 
     fn debug_info(&self) -> AnchorDebugInfo {

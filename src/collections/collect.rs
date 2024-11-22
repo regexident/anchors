@@ -1,7 +1,7 @@
 use std::{iter::FromIterator, panic::Location};
 
 use crate::{
-    core::{AnchorHandle, AnchorInner, Engine, OutputContext, Poll, UpdateContext},
+    core::{AnchorCore, AnchorHandle, Engine, OutputContext, Poll, UpdateContext},
     Anchor,
 };
 
@@ -55,7 +55,7 @@ where
     }
 }
 
-impl<C, T, E> AnchorInner<E> for Collect<C, T, E>
+impl<C, T, E> AnchorCore<E> for Collect<C, T, E>
 where
     C: 'static + FromIterator<T>,
     T: 'static + Clone,

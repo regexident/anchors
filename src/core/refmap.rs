@@ -1,6 +1,6 @@
 use std::panic::Location;
 
-use crate::core::{Anchor, AnchorInner, Engine, OutputContext, Poll, UpdateContext};
+use crate::core::{Anchor, AnchorCore, Engine, OutputContext, Poll, UpdateContext};
 
 pub struct RefMap<A, F> {
     pub(super) f: F,
@@ -8,7 +8,7 @@ pub struct RefMap<A, F> {
     pub(super) location: &'static Location<'static>,
 }
 
-impl<F, In, Out, E> AnchorInner<E> for RefMap<(Anchor<In, E>,), F>
+impl<F, In, Out, E> AnchorCore<E> for RefMap<(Anchor<In, E>,), F>
 where
     E: Engine,
     F: for<'any> Fn(&'any In) -> &'any Out,
