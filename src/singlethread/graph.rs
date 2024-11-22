@@ -24,7 +24,7 @@ thread_local! {
 
 pub struct Graph {
     pub(super) nodes: arena::Graph<Node>,
-    pub(super) graph_token: u32,
+    token: u32,
 
     pub(super) still_alive: Rc<Cell<bool>>,
 
@@ -41,7 +41,7 @@ impl Graph {
     pub fn new(max_height: usize) -> Self {
         Self {
             nodes: arena::Graph::new(),
-            graph_token: NEXT_TOKEN.with(|token| {
+            token: NEXT_TOKEN.with(|token| {
                 let n = token.get();
                 token.set(n + 1);
                 n
@@ -52,6 +52,10 @@ impl Graph {
             still_alive: Rc::new(Cell::new(true)),
             free_head: Box::new(Cell::new(None)),
         }
+    }
+
+    pub(super) fn accepts_key(&self, node_key: NodeKey) -> bool {
+        node_key.token == self.token
     }
 
     pub fn with<F: for<'any> FnOnce(GraphGuard<'any>) -> R, R>(&self, f: F) -> R {
@@ -104,7 +108,7 @@ impl Graph {
                     observed: Cell::new(false),
                     visited: Cell::new(false),
                     necessary_count: Cell::new(0),
-                    token: self.graph_token,
+                    token: self.token,
                     ptrs: NodePtrs {
                         clean_parent0: Cell::new(None),
                         clean_parents: RefCell::new(vec![]),
@@ -123,7 +127,7 @@ impl Graph {
                 };
                 nodes.insert(node)
             };
-            let num = NodeKey::new(unsafe { ptr.make_ptr() }, self.graph_token);
+            let num = NodeKey::new(unsafe { ptr.make_ptr() }, self.token);
             AnchorHandle::new(num, self.still_alive.clone())
         })
     }

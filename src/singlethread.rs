@@ -106,13 +106,13 @@ fn mark_dirty0<'a>(graph: GraphGuard<'a>, next: NodeGuard<'a>) {
 /// Single-threaded implementation of Anchors' `DirtyHandle`, which allows a node with non-Anchors inputs to manually mark itself as dirty.
 #[derive(Clone, Debug)]
 pub struct DirtyHandle {
-    num: NodeKey,
+    key: NodeKey,
     dirty_marks: Rc<RefCell<Vec<NodeKey>>>,
 }
 
 impl crate::expert::DirtyHandle for DirtyHandle {
     fn mark_dirty(&self) {
-        self.dirty_marks.borrow_mut().push(self.num);
+        self.dirty_marks.borrow_mut().push(self.key);
     }
 }
 
