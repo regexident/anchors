@@ -15,7 +15,7 @@ use crate::expert::{AnchorInner, OutputContext, Poll, UpdateContext};
 mod generation;
 mod graph;
 
-use graph::{Graph, Graph2Guard, NodeGuard, NodeKey, RecalcState};
+use graph::{Graph, GraphGuard, NodeGuard, NodeKey, RecalcState};
 
 pub use graph::{AnchorHandle, NodeKey as AnchorToken};
 
@@ -223,7 +223,7 @@ impl Engine {
     }
 
     /// returns false if calculation is still pending
-    fn recalculate<'a>(&self, graph: Graph2Guard<'a>, node: NodeGuard<'a>) -> bool {
+    fn recalculate<'a>(&self, graph: GraphGuard<'a>, node: NodeGuard<'a>) -> bool {
         let this_anchor = &node.anchor;
         let mut ecx = EngineContextMut {
             engine: self,
@@ -319,7 +319,7 @@ impl Engine {
 
 // skip_self = true indicates output has *definitely* changed, but node has been recalculated
 // skip_self = false indicates node has not yet been recalculated
-fn mark_dirty<'a>(graph: Graph2Guard<'a>, node: NodeGuard<'a>, skip_self: bool) {
+fn mark_dirty<'a>(graph: GraphGuard<'a>, node: NodeGuard<'a>, skip_self: bool) {
     if skip_self {
         let parents = node.drain_clean_parents();
         for parent in parents {
@@ -337,7 +337,7 @@ fn mark_dirty<'a>(graph: Graph2Guard<'a>, node: NodeGuard<'a>, skip_self: bool) 
     }
 }
 
-fn mark_dirty0<'a>(graph: Graph2Guard<'a>, next: NodeGuard<'a>) {
+fn mark_dirty0<'a>(graph: GraphGuard<'a>, next: NodeGuard<'a>) {
     let id = next.key();
     if Engine::check_observed_raw(next) != ObservedState::Unnecessary {
         graph.queue_recalc(next);
@@ -372,7 +372,7 @@ struct EngineContext<'eng> {
 
 struct EngineContextMut<'eng, 'gg> {
     engine: &'eng Engine,
-    graph: Graph2Guard<'gg>,
+    graph: GraphGuard<'gg>,
     node: NodeGuard<'gg>,
     pending_on_anchor_get: bool,
 }

@@ -42,7 +42,7 @@ pub struct Graph {
 }
 
 #[derive(Copy, Clone)]
-pub struct Graph2Guard<'gg> {
+pub struct GraphGuard<'gg> {
     nodes: arena::GraphGuard<'gg, Node>,
     graph: &'gg Graph,
 }
@@ -277,7 +277,7 @@ impl<'a> Drop for RefCellVecIterator<'a> {
     }
 }
 
-impl<'gg> Graph2Guard<'gg> {
+impl<'gg> GraphGuard<'gg> {
     pub fn get(&self, key: NodeKey) -> Option<NodeGuard<'gg>> {
         if key.token != self.graph.graph_token {
             return None;
@@ -365,9 +365,9 @@ impl Graph {
         }
     }
 
-    pub fn with<F: for<'any> FnOnce(Graph2Guard<'any>) -> R, R>(&self, func: F) -> R {
+    pub fn with<F: for<'any> FnOnce(GraphGuard<'any>) -> R, R>(&self, func: F) -> R {
         let nodes = unsafe { self.nodes.with_unchecked() };
-        func(Graph2Guard { nodes, graph: self })
+        func(GraphGuard { nodes, graph: self })
     }
 
     #[cfg(test)]
