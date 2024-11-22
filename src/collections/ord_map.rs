@@ -1,6 +1,6 @@
 use im::{ordmap::DiffItem, OrdMap};
 
-use crate::core::{Anchor, Engine};
+use crate::{core::Engine, Anchor};
 
 impl<E, K, V> Anchor<OrdMap<K, V>, E>
 where
