@@ -18,7 +18,7 @@ macro_rules! impl_tuple_map {
             Map<($(Anchor<$output_type, E>,)+), F, Out>
         where
             F: for<'any> FnMut($(&'any $output_type),+) -> Out,
-            Out: PartialEq + 'static,
+            Out: 'static + PartialEq,
             $(
                 $output_type: 'static,
             )+

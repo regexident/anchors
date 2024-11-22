@@ -16,7 +16,7 @@ macro_rules! impl_tuple_map_mut {
             MapMut<($(Anchor<$output_type, E>,)+), F, Out>
         where
             F: for<'any> FnMut(&'any mut Out, $(&'any $output_type),+) -> bool,
-            Out: PartialEq + 'static,
+            Out: 'static + PartialEq,
             $(
                 $output_type: 'static,
             )+

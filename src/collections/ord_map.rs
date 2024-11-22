@@ -4,18 +4,18 @@ use crate::expert::{Anchor, Engine};
 
 pub type Dict<K, V> = OrdMap<K, V>;
 
-impl<E: Engine, K: Ord + Clone + PartialEq + 'static, V: Clone + PartialEq + 'static>
+impl<E: Engine, K: 'static + Ord + Clone + PartialEq, V: 'static + Clone + PartialEq>
     Anchor<Dict<K, V>, E>
 {
     // TODO MERGE FN
-    pub fn inner_filter<F: FnMut(&K, &V) -> bool + 'static>(
+    pub fn inner_filter<F: 'static + FnMut(&K, &V) -> bool>(
         &self,
         mut f: F,
     ) -> Anchor<Dict<K, V>, E> {
         self.inner_filter_map(move |k, v| if f(k, v) { Some(v.clone()) } else { None })
     }
 
-    pub fn inner_map<F: FnMut(&K, &V) -> T + 'static, T: Clone + PartialEq + 'static>(
+    pub fn inner_map<F: 'static + FnMut(&K, &V) -> T, T: 'static + Clone + PartialEq>(
         &self,
         mut f: F,
     ) -> Anchor<Dict<K, T>, E> {
@@ -23,8 +23,8 @@ impl<E: Engine, K: Ord + Clone + PartialEq + 'static, V: Clone + PartialEq + 'st
     }
 
     pub fn inner_filter_map<
-        F: FnMut(&K, &V) -> Option<T> + 'static,
-        T: Clone + PartialEq + 'static,
+        F: 'static + FnMut(&K, &V) -> Option<T>,
+        T: 'static + Clone + PartialEq,
     >(
         &self,
         mut f: F,
@@ -59,8 +59,8 @@ impl<E: Engine, K: Ord + Clone + PartialEq + 'static, V: Clone + PartialEq + 'st
     }
 
     pub fn inner_unordered_fold<
-        T: PartialEq + Clone + 'static,
-        F: for<'a> FnMut(&mut T, DiffItem<'a, K, V>) -> bool + 'static,
+        T: 'static + PartialEq + Clone,
+        F: 'static + for<'a> FnMut(&mut T, DiffItem<'a, K, V>) -> bool,
     >(
         &self,
         initial_state: T,
