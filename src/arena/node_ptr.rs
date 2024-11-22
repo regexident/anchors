@@ -25,7 +25,7 @@ impl<N> NodePtr<N> {
 
 impl<N> Clone for NodePtr<N> {
     fn clone(&self) -> Self {
-        Self(self.0)
+        *self
     }
 }
 

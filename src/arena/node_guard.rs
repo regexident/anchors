@@ -9,10 +9,7 @@ pub struct NodeGuard<'gg, N> {
 
 impl<N> Clone for NodeGuard<'_, N> {
     fn clone(&self) -> Self {
-        Self {
-            node: self.node,
-            invariant: self.invariant,
-        }
+        *self
     }
 }
 
