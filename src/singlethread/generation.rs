@@ -9,7 +9,7 @@ impl Generation {
     }
 
     pub(super) fn increment(&mut self) {
-        let gen: u64 = u64::from(self.0) + 1;
+        let gen: u64 = u64::from(self.0).wrapping_add(1);
         self.0 = NonZeroU64::new(gen).unwrap();
     }
 }
