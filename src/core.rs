@@ -54,7 +54,9 @@ pub trait Engine: 'static {
     type AnchorHandle: AnchorHandle;
     type DirtyHandle: DirtyHandle;
 
-    fn mount<I: 'static + AnchorInner<Self>>(inner: I) -> Anchor<I::Output, Self>;
+    fn mount<I>(inner: I) -> Anchor<I::Output, Self>
+    where
+        I: 'static + AnchorInner<Self>;
 }
 
 /// Allows a node with non-Anchors inputs to manually mark itself as dirty. Each engine implements its own.
@@ -72,9 +74,10 @@ pub trait OutputContext<'eng> {
     /// calculated value can be accessed with this method. Its implementation is virtually
     /// identical to `UpdateContext`'s `get`. This is mostly used by AnchorInner implementations
     /// that want to return a reference to some other Anchor's output without cloning.
-    fn get<'out, O: 'static>(&self, anchor: &Anchor<O, Self::Engine>) -> &'out O
+    fn get<'out, O>(&self, anchor: &Anchor<O, Self::Engine>) -> &'out O
     where
-        'eng: 'out;
+        'eng: 'out,
+        O: 'static;
 }
 
 /// The context passed to an `AnchorInner` when its `poll_updated` method is called.
@@ -83,9 +86,10 @@ pub trait UpdateContext {
 
     /// If `request` indicates another Anchor's value is ready, the previously
     /// calculated value can be accessed with this method.
-    fn get<'out, 'slf, O: 'static>(&'slf self, anchor: &Anchor<O, Self::Engine>) -> &'out O
+    fn get<'out, 'slf, O>(&'slf self, anchor: &Anchor<O, Self::Engine>) -> &'out O
     where
-        'slf: 'out;
+        'slf: 'out,
+        O: 'static;
 
     /// If `anchor`'s output is ready, indicates whether the output has changed since this `AnchorInner`
     /// last called `request` on it. If `anchor`'s output is not ready, it is queued for recalculation and
