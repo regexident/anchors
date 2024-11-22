@@ -7,7 +7,7 @@ use super::{
     Graph, GraphGuard, Mounter, NodeGuard, NodeKey, ObservedState, RecalcState, DEFAULT_MOUNTER,
 };
 
-/// The main execution engine of Single-thread.
+/// An engine for single-threaded execution of a computation graph.
 pub struct Engine {
     // TODO store Nodes on heap directly?? maybe try for Rc<RefCell<SlotMap>> now
     graph: Rc<Graph>,
