@@ -24,10 +24,11 @@ mod node_guard;
 mod node_iterator;
 mod node_key;
 mod node_ptrs;
+mod var;
 
 pub use self::{
     anchor_handle::*, engine::*, graph::*, graph_guard::*, node::*, node_guard::*, node_key::*,
-    node_ptrs::*,
+    node_ptrs::*, var::*,
 };
 
 use self::{anchor::*, context::*, context_mut::*, generation::*, node_iterator::*};
@@ -37,9 +38,6 @@ use self::{anchor::*, context::*, context_mut::*, generation::*, node_iterator::
 /// You should basically never need to create these with `Anchor::new_from_core`; instead call functions like `Var::new` and `MultiAnchor::map`
 /// to create them.
 pub type Anchor<T> = crate::Anchor<T, Engine>;
-
-/// An Anchor input that can be mutated by calling a setter function from outside of the Anchors recomputation graph.
-pub type Var<T> = crate::core::Var<T, Engine>;
 
 thread_local! {
     static DEFAULT_MOUNTER: RefCell<Option<Mounter>> = const { RefCell::new(None) };

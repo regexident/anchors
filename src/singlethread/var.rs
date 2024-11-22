@@ -1,32 +1,29 @@
 use std::{cell::RefCell, rc::Rc};
 
-use super::{
-    Anchor, AnchorHandle, AnchorInner, DirtyHandle, Engine, OutputContext, Poll, UpdateContext,
-};
+use crate::core::{AnchorInner, DirtyHandle as _, Engine as _, OutputContext, Poll, UpdateContext};
+
+use super::{Anchor, AnchorHandle, DirtyHandle, Engine};
+
+/// A setter that can update values inside an associated `VarAnchor`.
+pub struct Var<T> {
+    inner: Rc<RefCell<VarShared<T>>>,
+    anchor: Anchor<T>,
+}
 
 /// An Anchor type for values that are mutated by calling a setter function from outside of the Anchors recomputation graph.
-struct VarAnchor<T, E: Engine> {
-    inner: Rc<RefCell<VarShared<T, E>>>,
+struct VarAnchor<T> {
+    inner: Rc<RefCell<VarShared<T>>>,
     val: Rc<T>,
 }
 
 #[derive(Clone)]
-struct VarShared<T, E: Engine> {
-    dirty_handle: Option<E::DirtyHandle>,
+struct VarShared<T> {
+    dirty_handle: Option<DirtyHandle>,
     val: Rc<T>,
     value_changed: bool,
 }
 
-/// A setter that can update values inside an associated `VarAnchor`.
-pub struct Var<T, E: Engine> {
-    inner: Rc<RefCell<VarShared<T, E>>>,
-    anchor: Anchor<T, E>,
-}
-
-impl<T, E> Clone for Var<T, E>
-where
-    E: Engine,
-{
+impl<T> Clone for Var<T> {
     fn clone(&self) -> Self {
         Self {
             inner: self.inner.clone(),
@@ -35,13 +32,12 @@ where
     }
 }
 
-impl<T, E> Var<T, E>
+impl<T> Var<T>
 where
     T: 'static,
-    E: Engine,
 {
     /// Creates a new Var
-    pub fn new(val: T) -> Var<T, E> {
+    pub fn new(val: T) -> Var<T> {
         let val = Rc::new(val);
         let inner = Rc::new(RefCell::new(VarShared {
             dirty_handle: None,
@@ -50,7 +46,7 @@ where
         }));
         Var {
             inner: inner.clone(),
-            anchor: E::mount(VarAnchor { inner, val }),
+            anchor: Engine::mount(VarAnchor { inner, val }),
         }
     }
 
@@ -70,23 +66,22 @@ where
         self.inner.borrow().val.clone()
     }
 
-    pub fn watch(&self) -> Anchor<T, E> {
+    pub fn watch(&self) -> Anchor<T> {
         self.anchor.clone()
     }
 }
 
-impl<E, T> AnchorInner<E> for VarAnchor<T, E>
+impl<T> AnchorInner<Engine> for VarAnchor<T>
 where
-    E: Engine,
     T: 'static,
 {
     type Output = T;
 
-    fn mark_dirty(&mut self, _edge: &<E::AnchorHandle as AnchorHandle>::Token) {
+    fn mark_dirty(&mut self, _edge: &<AnchorHandle as crate::core::AnchorHandle>::Token) {
         panic!("somehow an input was dirtied on VarAnchor; it never has any inputs to dirty")
     }
 
-    fn poll_updated(&mut self, ctx: &mut impl UpdateContext<Engine = E>) -> Poll {
+    fn poll_updated(&mut self, ctx: &mut impl UpdateContext<Engine = Engine>) -> Poll {
         let mut inner = self.inner.borrow_mut();
         let first_update = inner.dirty_handle.is_none();
         if first_update {
@@ -104,7 +99,7 @@ where
 
     fn output<'slf, 'out>(
         &'slf self,
-        _ctx: &mut impl OutputContext<'out, Engine = E>,
+        _ctx: &mut impl OutputContext<'out, Engine = Engine>,
     ) -> &'out Self::Output
     where
         'slf: 'out,
