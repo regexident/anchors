@@ -1,11 +1,7 @@
 //! Anchors' default execution engine.
 //!
-//! It's a single threaded engine capable of both Adapton-style pull updates
-//! and — if `mark_observed` and `mark_unobserved` are used, Incremental-style push updates.
-//!
-//! As of September 2020, execution overhead per-node sits at around 100ns on this author's MacBook Air,
-//! likely somewhat more if single node has a significant number of parents or children.
-//! Hopefully this will significantly improve over the coming months.
+//! It's a single threaded engine capable of both [Adapton](https://crates.io/crates/adapton)-style pull updates
+//! and — if `mark_observed` and `mark_unobserved` are used, [Incremental](https://crates.io/crates/incremental)-style push updates.
 
 use std::{cell::RefCell, rc::Rc};
 
@@ -101,7 +97,7 @@ fn mark_dirty0<'a>(graph: GraphGuard<'a>, next: NodeGuard<'a>) {
     }
 }
 
-/// Single-threaded implementation of Anchors' `DirtyHandle`, which allows a node with non-Anchors inputs to manually mark itself as dirty.
+/// A handle, which allows an anchor with non-Anchors inputs to manually mark itself as dirty.
 #[derive(Clone, Debug)]
 pub struct DirtyHandle {
     key: NodeKey,

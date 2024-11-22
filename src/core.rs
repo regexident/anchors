@@ -1,7 +1,7 @@
-//! Common code used between different engines.
+//! Common low-level code used between different engines.
 //!
 //! Unless you're implementing your own generic `AnchorCore`s or your own execution engine,
-//! you should never need to import things from here. `singlethread` should re-export anything
+//! you should never need to import things from here. The crate root should re-export anything
 //! you need to use `anchors`!
 
 use std::{fmt::Debug, hash::Hash, panic::Location};
