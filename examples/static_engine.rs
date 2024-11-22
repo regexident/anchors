@@ -1,9 +1,6 @@
 use std::cell::RefCell;
 
-use anchors::{
-    expert::{MultiAnchor, Var},
-    singlethread::*,
-};
+use anchors::{expert::Var, singlethread::*};
 
 thread_local! {
     pub static ENGINE: RefCell<Engine> = RefCell::new(Engine::new());
@@ -13,8 +10,8 @@ fn main() {
     // important to call ENGINE.with before we create any Anchors, since the engine
     // must have been initialized for an anchor to be created.
     ENGINE.with(|engine| {
-        let foo = Var::new(1);
-        let foo_added = foo.watch().map(|n| n + 1);
-        println!("{:?}", engine.borrow_mut().get(&foo_added));
+        let var = Var::new(1);
+        let var_added = var.watch().map(|n| n + 1);
+        println!("{:?}", engine.borrow_mut().get(&var_added));
     });
 }
