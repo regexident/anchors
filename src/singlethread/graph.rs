@@ -152,6 +152,7 @@ pub fn ensure_height_increases<'a>(
     res.map(|()| false)
 }
 
+#[allow(clippy::result_unit_err)] // FIXME
 fn set_min_height(node: NodeGuard<'_>, min_height: usize) -> Result<(), ()> {
     if node.visited.get() {
         return Err(());
