@@ -13,11 +13,11 @@ pub use crate::expert::MultiAnchor;
 use crate::expert::{AnchorInner, OutputContext, Poll, UpdateContext};
 
 mod generation;
-mod graph2;
+mod graph;
 
-use graph2::{Graph2, Graph2Guard, NodeGuard, NodeKey, RecalcState};
+use graph::{Graph2, Graph2Guard, NodeGuard, NodeKey, RecalcState};
 
-pub use graph2::{AnchorHandle, NodeKey as AnchorToken};
+pub use graph::{AnchorHandle, NodeKey as AnchorToken};
 
 use generation::Generation;
 
@@ -123,7 +123,7 @@ impl Engine {
         self.graph.with(|graph| {
             let node = graph.get(anchor.token()).unwrap();
             node.observed.set(true);
-            if graph2::recalc_state(node) != RecalcState::Ready {
+            if graph::recalc_state(node) != RecalcState::Ready {
                 graph.queue_recalc(node);
             }
         })
@@ -165,7 +165,7 @@ impl Engine {
         self.stabilize();
         self.graph.with(|graph| {
             let anchor_node = graph.get(anchor.token()).unwrap();
-            if graph2::recalc_state(anchor_node) != RecalcState::Ready {
+            if graph::recalc_state(anchor_node) != RecalcState::Ready {
                 graph.queue_recalc(anchor_node);
                 // stabilize again, to make sure our target node that is now in the queue is up-to-date
                 // use stabilize0 because no dirty marks have occurred since last stabilization, and we want
@@ -206,7 +206,7 @@ impl Engine {
     fn stabilize0(&self) {
         self.graph.with(|graph| {
             while let Some((height, node)) = graph.recalc_pop_next() {
-                let calculation_complete = if graph2::height(node) == height {
+                let calculation_complete = if graph::height(node) == height {
                     // TODO with new graph we can automatically relocate nodes if their height changes
                     // this nodes height is current, so we can recalculate
                     self.recalculate(graph, node)
@@ -341,8 +341,8 @@ fn mark_dirty0<'a>(graph: Graph2Guard<'a>, next: NodeGuard<'a>) {
     let id = next.key();
     if Engine::check_observed_raw(next) != ObservedState::Unnecessary {
         graph.queue_recalc(next);
-    } else if graph2::recalc_state(next) == RecalcState::Ready {
-        graph2::needs_recalc(next);
+    } else if graph::recalc_state(next) == RecalcState::Ready {
+        graph::needs_recalc(next);
         let parents = next.drain_clean_parents();
         for parent in parents {
             if let Some(v) = parent.anchor.borrow_mut().as_mut() {
@@ -387,7 +387,7 @@ impl<'eng> OutputContext<'eng> for EngineContext<'eng> {
     {
         self.engine.graph.with(|graph| {
             let node = graph.get(anchor.token()).unwrap();
-            if graph2::recalc_state(node) != RecalcState::Ready {
+            if graph::recalc_state(node) != RecalcState::Ready {
                 panic!("attempted to get node that was not previously requested")
             }
             let unsafe_borrow = unsafe { node.anchor.as_ptr().as_ref().unwrap() };
@@ -414,7 +414,7 @@ impl<'eng, 'gg> UpdateContext for EngineContextMut<'eng, 'gg> {
     {
         self.engine.graph.with(|graph| {
             let node = graph.get(anchor.token()).unwrap();
-            if graph2::recalc_state(node) != RecalcState::Ready {
+            if graph::recalc_state(node) != RecalcState::Ready {
                 panic!("attempted to get node that was not previously requested")
             }
 
@@ -436,7 +436,7 @@ impl<'eng, 'gg> UpdateContext for EngineContextMut<'eng, 'gg> {
         O: 'static,
     {
         let child = self.graph.get(anchor.token()).unwrap();
-        let height_already_increased = match graph2::ensure_height_increases(child, self.node) {
+        let height_already_increased = match graph::ensure_height_increases(child, self.node) {
             Ok(v) => v,
             Err(()) => {
                 panic!("loop detected in anchors!\n");
@@ -445,7 +445,7 @@ impl<'eng, 'gg> UpdateContext for EngineContextMut<'eng, 'gg> {
 
         let self_is_necessary = Engine::check_observed_raw(self.node) != ObservedState::Unnecessary;
 
-        if graph2::recalc_state(child) != RecalcState::Ready {
+        if graph::recalc_state(child) != RecalcState::Ready {
             self.pending_on_anchor_get = true;
             self.graph.queue_recalc(child);
             if necessary && self_is_necessary {
