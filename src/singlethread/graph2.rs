@@ -5,14 +5,14 @@ use std::{
     rc::Rc,
 };
 
-use arena_graph::raw as ag;
+use crate::arena;
 
 use super::{AnchorDebugInfo, Generation, GenericAnchor};
 
 #[derive(Copy, Clone, PartialEq, Debug)]
-pub struct NodeGuard<'gg>(ag::NodeGuard<'gg, Node>);
+pub struct NodeGuard<'gg>(arena::NodeGuard<'gg, Node>);
 
-type NodePtr = ag::NodePtr<Node>;
+type NodePtr = arena::NodePtr<Node>;
 
 #[derive(Copy, Clone, Default, Eq, PartialEq, Hash, Debug)]
 pub enum RecalcState {
@@ -27,7 +27,7 @@ thread_local! {
 }
 
 pub struct Graph2 {
-    nodes: ag::Graph<Node>,
+    nodes: arena::Graph<Node>,
     graph_token: u32,
 
     still_alive: Rc<Cell<bool>>,
@@ -43,7 +43,7 @@ pub struct Graph2 {
 
 #[derive(Copy, Clone)]
 pub struct Graph2Guard<'gg> {
-    nodes: ag::GraphGuard<'gg, Node>,
+    nodes: arena::GraphGuard<'gg, Node>,
     graph: &'gg Graph2,
 }
 
@@ -351,7 +351,7 @@ impl<'gg> Graph2Guard<'gg> {
 impl Graph2 {
     pub fn new(max_height: usize) -> Self {
         Self {
-            nodes: ag::Graph::new(),
+            nodes: arena::Graph::new(),
             graph_token: NEXT_TOKEN.with(|token| {
                 let n = token.get();
                 token.set(n + 1);
