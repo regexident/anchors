@@ -140,8 +140,10 @@ impl Drop for AnchorHandle {
         }
     }
 }
+
 impl crate::expert::AnchorHandle for AnchorHandle {
     type Token = NodeKey;
+
     fn token(&self) -> NodeKey {
         self.num
     }
@@ -149,6 +151,7 @@ impl crate::expert::AnchorHandle for AnchorHandle {
 
 impl<'a> std::ops::Deref for NodeGuard<'a> {
     type Target = Node;
+
     fn deref(&self) -> &Node {
         &*self.0
     }

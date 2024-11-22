@@ -74,6 +74,7 @@ impl<O, E: Engine> PartialEq for Anchor<O, E> {
         self.token() == other.token()
     }
 }
+
 impl<O, E: Engine> Eq for Anchor<O, E> {}
 
 /// A reference to a particular `AnchorInner`. Each engine implements its own.

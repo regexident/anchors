@@ -339,6 +339,7 @@ pub struct DirtyHandle {
     num: NodeKey,
     dirty_marks: Rc<RefCell<Vec<NodeKey>>>,
 }
+
 impl crate::expert::DirtyHandle for DirtyHandle {
     fn mark_dirty(&self) {
         self.dirty_marks.borrow_mut().push(self.num);
