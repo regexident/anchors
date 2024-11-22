@@ -98,9 +98,6 @@ impl<'eng, 'gg> UpdateContext for EngineContextMut<'eng, 'gg> {
     }
 
     fn dirty_handle(&mut self) -> DirtyHandle {
-        DirtyHandle {
-            num: self.node.key(),
-            dirty_marks: self.engine.dirty_marks.clone(),
-        }
+        self.engine.dirty_handle_for_node(self.node.key())
     }
 }

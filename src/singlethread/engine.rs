@@ -11,7 +11,7 @@ use super::{
 pub struct Engine {
     // TODO store Nodes on heap directly?? maybe try for Rc<RefCell<SlotMap>> now
     graph: Rc<Graph>,
-    pub(super) dirty_marks: Rc<RefCell<Vec<NodeKey>>>,
+    dirty_marks: Rc<RefCell<Vec<NodeKey>>>,
 
     // tracks the current stabilization generation; incremented on every stabilize
     generation: Generation,
@@ -134,6 +134,19 @@ impl Engine {
                 .unwrap()
                 .clone()
         })
+    }
+
+    pub(super) fn accepts_key(&self, key: NodeKey) -> bool {
+        self.graph.accepts_key(key)
+    }
+
+    pub(super) fn dirty_handle_for_node(&self, key: NodeKey) -> DirtyHandle {
+        assert!(self.accepts_key(key));
+
+        DirtyHandle {
+            key,
+            dirty_marks: self.dirty_marks.clone(),
+        }
     }
 
     pub(crate) fn update_dirty_marks(&mut self) {

@@ -14,16 +14,17 @@ impl<'gg> GraphGuard<'gg> {
     }
 
     pub fn get(&self, key: NodeKey) -> Option<NodeGuard<'gg>> {
-        if key.token != self.graph.graph_token {
+        if !self.graph.accepts_key(key) {
             return None;
         }
+
         Some(NodeGuard(unsafe { self.nodes.lookup_ptr(key.ptr) }))
     }
 
     #[cfg(test)]
     pub fn insert_testing_guard(&self) -> NodeGuard<'gg> {
         let handle = self.graph.insert_testing();
-        let guard = self.get(handle.num()).unwrap();
+        let guard = self.get(handle.key()).unwrap();
         std::mem::forget(handle);
         guard
     }
