@@ -26,7 +26,7 @@ thread_local! {
     pub static NEXT_TOKEN: Cell<u32> = const { Cell::new(0) };
 }
 
-pub struct Graph2 {
+pub struct Graph {
     nodes: arena::Graph<Node>,
     graph_token: u32,
 
@@ -44,7 +44,7 @@ pub struct Graph2 {
 #[derive(Copy, Clone)]
 pub struct Graph2Guard<'gg> {
     nodes: arena::GraphGuard<'gg, Node>,
-    graph: &'gg Graph2,
+    graph: &'gg Graph,
 }
 
 pub struct Node {
@@ -84,7 +84,7 @@ pub struct NodePtrs {
     clean_parent0: Cell<Option<NodePtr>>,
     clean_parents: RefCell<Vec<NodePtr>>,
 
-    graph: *const Graph2,
+    graph: *const Graph,
 
     /// Next node in either recalc linked list for this height, or if node is in the free list, the free linked list.
     /// If this is the last node, None.
@@ -348,7 +348,7 @@ impl<'gg> Graph2Guard<'gg> {
     }
 }
 
-impl Graph2 {
+impl Graph {
     pub fn new(max_height: usize) -> Self {
         Self {
             nodes: arena::Graph::new(),
@@ -447,7 +447,7 @@ impl Graph2 {
     }
 }
 
-impl Drop for Graph2 {
+impl Drop for Graph {
     fn drop(&mut self) {
         self.still_alive.set(false);
     }
@@ -491,7 +491,7 @@ fn set_min_height(node: NodeGuard<'_>, min_height: usize) -> Result<(), ()> {
     Ok(())
 }
 
-fn dequeue_calc(graph: &Graph2, node: NodeGuard<'_>) {
+fn dequeue_calc(graph: &Graph, node: NodeGuard<'_>) {
     if node.ptrs.recalc_state.get() != RecalcState::Pending {
         return;
     }
@@ -573,7 +573,7 @@ mod test {
 
     #[test]
     fn set_edge_updates_correctly() {
-        let graph = Graph2::new(256);
+        let graph = Graph::new(256);
 
         graph.with(|guard| {
             let a = guard.insert_testing_guard();
@@ -631,7 +631,7 @@ mod test {
 
     #[test]
     fn height_calculated_correctly() {
-        let graph = Graph2::new(256);
+        let graph = Graph::new(256);
 
         graph.with(|guard| {
             let a = guard.insert_testing_guard();
@@ -670,7 +670,7 @@ mod test {
 
     #[test]
     fn cycles_cause_error() {
-        let graph = Graph2::new(256);
+        let graph = Graph::new(256);
 
         graph.with(|guard| {
             let b = guard.insert_testing_guard();
@@ -683,7 +683,7 @@ mod test {
 
     #[test]
     fn non_cycles_wont_cause_errors() {
-        let graph = Graph2::new(256);
+        let graph = Graph::new(256);
 
         graph.with(|guard| {
             let a = guard.insert_testing_guard();
@@ -707,7 +707,7 @@ mod test {
 
     #[test]
     fn test_insert_pop() {
-        let graph = Graph2::new(10);
+        let graph = Graph::new(10);
 
         graph.with(|guard| {
             let a = guard.insert_testing_guard();
@@ -752,7 +752,7 @@ mod test {
     #[test]
     #[should_panic]
     fn test_insert_above_max_height() {
-        let graph = Graph2::new(10);
+        let graph = Graph::new(10);
 
         graph.with(|guard| {
             let a = guard.insert_testing_guard();
@@ -765,7 +765,7 @@ mod test {
     fn test_free_list() {
         use crate::expert::AnchorHandle;
 
-        let graph = Graph2::new(10);
+        let graph = Graph::new(10);
 
         let a = graph.insert_testing();
         let b = graph.insert_testing();

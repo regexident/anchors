@@ -15,7 +15,7 @@ use crate::expert::{AnchorInner, OutputContext, Poll, UpdateContext};
 mod generation;
 mod graph;
 
-use graph::{Graph2, Graph2Guard, NodeGuard, NodeKey, RecalcState};
+use graph::{Graph, Graph2Guard, NodeGuard, NodeKey, RecalcState};
 
 pub use graph::{AnchorHandle, NodeKey as AnchorToken};
 
@@ -55,7 +55,7 @@ pub enum ObservedState {
 /// The main execution engine of Single-thread.
 pub struct Engine {
     // TODO store Nodes on heap directly?? maybe try for Rc<RefCell<SlotMap>> now
-    graph: Rc<Graph2>,
+    graph: Rc<Graph>,
     dirty_marks: Rc<RefCell<Vec<NodeKey>>>,
 
     // tracks the current stabilization generation; incremented on every stabilize
@@ -63,7 +63,7 @@ pub struct Engine {
 }
 
 struct Mounter {
-    graph: Rc<Graph2>,
+    graph: Rc<Graph>,
 }
 
 impl crate::expert::Engine for Engine {
@@ -100,7 +100,7 @@ impl Engine {
 
     /// Creates a new Engine with a custom maximum height.
     pub fn new_with_max_height(max_height: usize) -> Self {
-        let graph = Rc::new(Graph2::new(max_height));
+        let graph = Rc::new(Graph::new(max_height));
         let mounter = Mounter {
             graph: graph.clone(),
         };
