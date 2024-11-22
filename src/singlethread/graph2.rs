@@ -14,21 +14,16 @@ pub struct NodeGuard<'gg>(ag::NodeGuard<'gg, Node>);
 
 type NodePtr = ag::NodePtr<Node>;
 
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+#[derive(Clone, Copy, Default, PartialEq, Eq, Hash, Debug)]
 pub enum RecalcState {
+    #[default]
     Needed,
     Pending,
     Ready,
 }
 
-impl Default for RecalcState {
-    fn default() -> Self {
-        RecalcState::Needed
-    }
-}
-
 thread_local! {
-    pub static NEXT_TOKEN: Cell<u32> = Cell::new(0);
+    pub static NEXT_TOKEN: Cell<u32> = const { Cell::new(0) };
 }
 
 pub struct Graph2 {
@@ -121,7 +116,7 @@ impl Clone for AnchorHandle {
             count.set(count.get() + 1);
         }
         AnchorHandle {
-            num: self.num.clone(),
+            num: self.num,
             still_alive: self.still_alive.clone(),
         }
     }
@@ -133,7 +128,6 @@ impl Drop for AnchorHandle {
             let count = &unsafe { self.num.ptr.lookup_unchecked() }.ptrs.handle_count;
             let new_count = count.get() - 1;
             count.set(new_count);
-            std::mem::drop(count);
             if new_count == 0 {
                 unsafe { free(self.num.ptr) };
             }
@@ -153,7 +147,7 @@ impl<'a> std::ops::Deref for NodeGuard<'a> {
     type Target = Node;
 
     fn deref(&self) -> &Node {
-        &*self.0
+        &self.0
     }
 }
 
@@ -377,7 +371,7 @@ impl Graph2 {
     }
 
     #[cfg(test)]
-    pub fn insert_testing<'a>(&'a self) -> AnchorHandle {
+    pub fn insert_testing(&self) -> AnchorHandle {
         self.insert(
             Box::new(crate::expert::constant::Constant::new_raw_testing(123)),
             AnchorDebugInfo {
@@ -387,8 +381,8 @@ impl Graph2 {
         )
     }
 
-    pub(super) fn insert<'a>(
-        &'a self,
+    pub(super) fn insert(
+        &self,
         anchor: Box<dyn GenericAnchor>,
         debug_info: AnchorDebugInfo,
     ) -> AnchorHandle {
@@ -425,7 +419,7 @@ impl Graph2 {
                     ptrs: NodePtrs {
                         clean_parent0: Cell::new(None),
                         clean_parents: RefCell::new(vec![]),
-                        graph: &*self,
+                        graph: self,
                         next: Cell::new(None),
                         prev: Cell::new(None),
                         recalc_state: Cell::new(RecalcState::Needed),
@@ -472,7 +466,7 @@ pub fn ensure_height_increases<'a>(
     res.map(|()| false)
 }
 
-fn set_min_height<'a>(node: NodeGuard<'a>, min_height: usize) -> Result<(), ()> {
+fn set_min_height(node: NodeGuard<'_>, min_height: usize) -> Result<(), ()> {
     if node.visited.get() {
         return Err(());
     }
@@ -497,7 +491,7 @@ fn set_min_height<'a>(node: NodeGuard<'a>, min_height: usize) -> Result<(), ()> 
     Ok(())
 }
 
-fn dequeue_calc<'a>(graph: &Graph2, node: NodeGuard<'a>) {
+fn dequeue_calc(graph: &Graph2, node: NodeGuard<'_>) {
     if node.ptrs.recalc_state.get() != RecalcState::Pending {
         return;
     }
@@ -534,7 +528,7 @@ unsafe fn free(ptr: NodePtr) {
     let guard = NodeGuard(ptr.lookup_unchecked());
     let _ = guard.drain_necessary_children();
     let _ = guard.drain_clean_parents();
-    let graph = &*(*guard).ptrs.graph;
+    let graph = &*guard.ptrs.graph;
     dequeue_calc(graph, guard);
     // TODO clear out this node with default empty data
     // TODO add node to chain of free nodes
@@ -552,11 +546,11 @@ unsafe fn free(ptr: NodePtr) {
     *guard.anchor.borrow_mut() = None;
 }
 
-pub fn height<'a>(node: NodeGuard<'a>) -> usize {
+pub fn height(node: NodeGuard<'_>) -> usize {
     node.ptrs.height.get()
 }
 
-pub fn needs_recalc<'a>(node: NodeGuard<'a>) {
+pub fn needs_recalc(node: NodeGuard<'_>) {
     if node.ptrs.recalc_state.get() != RecalcState::Ready {
         // already in recalc queue, or already pending recalc
         return;
@@ -565,7 +559,7 @@ pub fn needs_recalc<'a>(node: NodeGuard<'a>) {
     node.ptrs.recalc_state.set(RecalcState::Needed);
 }
 
-pub fn recalc_state<'a>(node: NodeGuard<'a>) -> RecalcState {
+pub fn recalc_state(node: NodeGuard<'_>) -> RecalcState {
     node.ptrs.recalc_state.get()
 }
 

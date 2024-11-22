@@ -134,16 +134,12 @@ pub trait UpdateContext {
     ///
     /// `necessary` is a bit that indicates if we are necessary, `anchor` should be marked as necessary
     /// as well. If you don't know what this bit should be set to, you probably want a value of `true`.
-    fn request<'out, O: 'static>(
-        &mut self,
-        anchor: &Anchor<O, Self::Engine>,
-        necessary: bool,
-    ) -> Poll;
+    fn request<O: 'static>(&mut self, anchor: &Anchor<O, Self::Engine>, necessary: bool) -> Poll;
 
     /// If `anchor` was previously passed to `request` and you no longer care about its output, you can
     /// pass it to `unrequest` so the engine will stop calling your `dirty` method when `anchor` changes.
     /// If `self` is necessary, this is also critical for ensuring `anchor` is no longer marked as necessary.
-    fn unrequest<'out, O: 'static>(&mut self, anchor: &Anchor<O, Self::Engine>);
+    fn unrequest<O: 'static>(&mut self, anchor: &Anchor<O, Self::Engine>);
 
     /// Returns a new dirty handle, used for marking that `self`'s output may have changed through some
     /// non incremental means. For instance, perhaps this `AnchorInner`s value represents the current time, or
