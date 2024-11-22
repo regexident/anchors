@@ -8,7 +8,10 @@ impl<E: Engine, K: Ord + Clone + PartialEq + 'static, V: Clone + PartialEq + 'st
     Anchor<Dict<K, V>, E>
 {
     // TODO MERGE FN
-    pub fn inner_filter<F: FnMut(&K, &V) -> bool + 'static>(&self, mut f: F) -> Anchor<Dict<K, V>, E> {
+    pub fn inner_filter<F: FnMut(&K, &V) -> bool + 'static>(
+        &self,
+        mut f: F,
+    ) -> Anchor<Dict<K, V>, E> {
         self.inner_filter_map(move |k, v| if f(k, v) { Some(v.clone()) } else { None })
     }
 
@@ -19,7 +22,10 @@ impl<E: Engine, K: Ord + Clone + PartialEq + 'static, V: Clone + PartialEq + 'st
         self.inner_filter_map(move |k, v| Some(f(k, v)))
     }
 
-    pub fn inner_filter_map<F: FnMut(&K, &V) -> Option<T> + 'static, T: Clone + PartialEq + 'static>(
+    pub fn inner_filter_map<
+        F: FnMut(&K, &V) -> Option<T> + 'static,
+        T: Clone + PartialEq + 'static,
+    >(
         &self,
         mut f: F,
     ) -> Anchor<Dict<K, T>, E> {
@@ -77,6 +83,7 @@ impl<E: Engine, K: Ord + Clone + PartialEq + 'static, V: Clone + PartialEq + 'st
 #[cfg(test)]
 mod test {
     use super::*;
+
     #[test]
     fn test_filter() {
         let mut engine = crate::singlethread::Engine::new();

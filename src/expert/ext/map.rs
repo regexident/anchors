@@ -24,9 +24,11 @@ macro_rules! impl_tuple_map {
             E: Engine,
         {
             type Output = Out;
+
             fn dirty(&mut self, _edge:  &<E::AnchorHandle as AnchorHandle>::Token) {
                 self.output_stale = true;
             }
+
             fn poll_updated<G: UpdateContext<Engine=E>>(
                 &mut self,
                 ctx: &mut G,
@@ -67,6 +69,7 @@ macro_rules! impl_tuple_map {
                 }
                 Poll::Unchanged
             }
+
             fn output<'slf, 'out, G: OutputContext<'out, Engine=E>>(
                 &'slf self,
                 _ctx: &mut G,
