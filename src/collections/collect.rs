@@ -4,27 +4,27 @@ use crate::expert::{
     Anchor, AnchorHandle, AnchorInner, Engine, OutputContext, Poll, UpdateContext,
 };
 
-impl<I, E> std::iter::FromIterator<Anchor<I, E>> for Anchor<Vec<I>, E>
+impl<T, E> std::iter::FromIterator<Anchor<T, E>> for Anchor<Vec<T>, E>
 where
-    I: 'static + Clone,
+    T: 'static + Clone,
     E: Engine,
 {
-    fn from_iter<T>(iter: T) -> Self
+    fn from_iter<I>(iter: I) -> Self
     where
-        T: IntoIterator<Item = Anchor<I, E>>,
+        I: IntoIterator<Item = Anchor<T, E>>,
     {
         VecCollect::new_anchor(iter.into_iter().collect())
     }
 }
 
-impl<'a, I, E> std::iter::FromIterator<&'a Anchor<I, E>> for Anchor<Vec<I>, E>
+impl<'a, T, E> std::iter::FromIterator<&'a Anchor<T, E>> for Anchor<Vec<T>, E>
 where
-    I: 'static + Clone,
+    T: 'static + Clone,
     E: Engine,
 {
-    fn from_iter<T>(iter: T) -> Self
+    fn from_iter<I>(iter: I) -> Self
     where
-        T: IntoIterator<Item = &'a Anchor<I, E>>,
+        I: IntoIterator<Item = &'a Anchor<T, E>>,
     {
         VecCollect::new_anchor(iter.into_iter().cloned().collect())
     }
@@ -103,9 +103,11 @@ mod test {
     #[test]
     fn collect() {
         let mut engine = Engine::new();
+
         let a = Var::new(1);
         let b = Var::new(2);
         let c = Var::new(5);
+
         let nums: Anchor<Vec<_>> = vec![a.watch(), b.watch(), c.watch()].into_iter().collect();
         let sum: Anchor<usize> = nums.map(|nums| nums.iter().sum());
 

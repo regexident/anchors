@@ -88,64 +88,82 @@ mod test {
     #[test]
     fn test_filter() {
         let mut engine = crate::singlethread::Engine::new();
-        let mut dict = OrdMap::new();
-        let a = crate::expert::Var::new(dict.clone());
+
+        let mut a_map = OrdMap::new();
+        let a = crate::expert::Var::new(a_map.clone());
+
         let b = a.watch().inner_filter(|_, n| *n > 10);
-        let b_out = engine.get(&b);
-        assert_eq!(0, b_out.len());
+        let b_map = engine.get(&b);
 
-        dict.insert("a".to_string(), 1);
-        dict.insert("b".to_string(), 23);
-        dict.insert("c".to_string(), 5);
-        dict.insert("d".to_string(), 24);
-        a.set(dict.clone());
-        let b_out = engine.get(&b);
-        assert_eq!(2, b_out.len());
-        assert_eq!(Some(&23), b_out.get("b"));
-        assert_eq!(Some(&24), b_out.get("d"));
+        assert_eq!(0, b_map.len());
 
-        dict.insert("a".to_string(), 25);
-        dict.insert("b".to_string(), 5);
-        dict.remove("d");
-        dict.insert("e".to_string(), 50);
-        a.set(dict.clone());
-        let b_out = engine.get(&b);
-        assert_eq!(2, b_out.len());
-        assert_eq!(Some(&25), b_out.get("a"));
-        assert_eq!(Some(&50), b_out.get("e"));
+        a_map.insert("a".to_string(), 1);
+        a_map.insert("b".to_string(), 23);
+        a_map.insert("c".to_string(), 5);
+        a_map.insert("d".to_string(), 24);
+
+        a.set(a_map.clone());
+
+        let b_map = engine.get(&b);
+        assert_eq!(2, b_map.len());
+
+        assert_eq!(Some(&23), b_map.get("b"));
+        assert_eq!(Some(&24), b_map.get("d"));
+
+        a_map.insert("a".to_string(), 25);
+        a_map.insert("b".to_string(), 5);
+        a_map.remove("d");
+        a_map.insert("e".to_string(), 50);
+
+        a.set(a_map.clone());
+
+        let b_map = engine.get(&b);
+        assert_eq!(2, b_map.len());
+
+        assert_eq!(Some(&25), b_map.get("a"));
+        assert_eq!(Some(&50), b_map.get("e"));
     }
 
     #[test]
     fn test_map() {
         let mut engine = crate::singlethread::Engine::new();
-        let mut dict = OrdMap::new();
-        let a = crate::expert::Var::new(dict.clone());
+
+        let mut a_map = OrdMap::new();
+        let a = crate::expert::Var::new(a_map.clone());
+
         let b = a.watch().inner_map(|_, n| *n + 1);
-        let b_out = engine.get(&b);
-        assert_eq!(0, b_out.len());
+        let b_map = engine.get(&b);
 
-        dict.insert("a".to_string(), 1);
-        dict.insert("b".to_string(), 2);
-        dict.insert("c".to_string(), 3);
-        dict.insert("d".to_string(), 4);
-        a.set(dict.clone());
-        let b_out = engine.get(&b);
-        assert_eq!(4, b_out.len());
-        assert_eq!(Some(&2), b_out.get("a"));
-        assert_eq!(Some(&3), b_out.get("b"));
-        assert_eq!(Some(&4), b_out.get("c"));
-        assert_eq!(Some(&5), b_out.get("d"));
+        assert_eq!(0, b_map.len());
 
-        dict.insert("a".to_string(), 10);
-        dict.insert("b".to_string(), 11);
-        dict.remove("d");
-        dict.insert("e".to_string(), 12);
-        a.set(dict.clone());
-        let b_out = engine.get(&b);
-        assert_eq!(4, b_out.len());
-        assert_eq!(Some(&11), b_out.get("a"));
-        assert_eq!(Some(&12), b_out.get("b"));
-        assert_eq!(Some(&4), b_out.get("c"));
-        assert_eq!(Some(&13), b_out.get("e"));
+        a_map.insert("a".to_string(), 1);
+        a_map.insert("b".to_string(), 2);
+        a_map.insert("c".to_string(), 3);
+        a_map.insert("d".to_string(), 4);
+
+        a.set(a_map.clone());
+
+        let b_map = engine.get(&b);
+        assert_eq!(4, b_map.len());
+
+        assert_eq!(Some(&2), b_map.get("a"));
+        assert_eq!(Some(&3), b_map.get("b"));
+        assert_eq!(Some(&4), b_map.get("c"));
+        assert_eq!(Some(&5), b_map.get("d"));
+
+        a_map.insert("a".to_string(), 10);
+        a_map.insert("b".to_string(), 11);
+        a_map.remove("d");
+        a_map.insert("e".to_string(), 12);
+
+        a.set(a_map.clone());
+
+        let b_map = engine.get(&b);
+        assert_eq!(4, b_map.len());
+
+        assert_eq!(Some(&11), b_map.get("a"));
+        assert_eq!(Some(&12), b_map.get("b"));
+        assert_eq!(Some(&4), b_map.get("c"));
+        assert_eq!(Some(&13), b_map.get("e"));
     }
 }
