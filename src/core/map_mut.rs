@@ -1,6 +1,6 @@
 use std::panic::Location;
 
-use crate::core::{Anchor, AnchorInner, Engine, OutputContext, Poll, UpdateContext};
+use crate::core::{Anchor, AnchorCore, Engine, OutputContext, Poll, UpdateContext};
 
 pub struct MapMut<A, F, Out> {
     pub(super) f: F,
@@ -12,7 +12,7 @@ pub struct MapMut<A, F, Out> {
 
 macro_rules! impl_tuple_map_mut {
     ($([$output_type:ident, $num:tt])+) => {
-        impl<$($output_type,)+ E, F, Out> AnchorInner<E> for
+        impl<$($output_type,)+ E, F, Out> AnchorCore<E> for
             MapMut<($(Anchor<$output_type, E>,)+), F, Out>
         where
             F: for<'any> FnMut(&'any mut Out, $(&'any $output_type),+) -> bool,

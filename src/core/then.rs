@@ -1,6 +1,6 @@
 use std::panic::Location;
 
-use crate::core::{Anchor, AnchorHandle, AnchorInner, Engine, OutputContext, Poll, UpdateContext};
+use crate::core::{Anchor, AnchorCore, AnchorHandle, Engine, OutputContext, Poll, UpdateContext};
 
 pub struct Then<A, Out, F, E: Engine> {
     pub(super) f: F,
@@ -12,7 +12,7 @@ pub struct Then<A, Out, F, E: Engine> {
 
 macro_rules! impl_tuple_then {
     ($([$output_type:ident, $num:tt])+) => {
-        impl<$($output_type,)+ E, F, Out> AnchorInner<E> for
+        impl<$($output_type,)+ E, F, Out> AnchorCore<E> for
             Then<( $(Anchor<$output_type, E>,)+ ), Out, F, E>
         where
             F: for<'any> FnMut($(&'any $output_type),+) -> Anchor<Out, E>,

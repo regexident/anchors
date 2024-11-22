@@ -1,6 +1,6 @@
 use std::{cell::RefCell, rc::Rc};
 
-use crate::core::{AnchorInner, Poll};
+use crate::core::{AnchorCore, Poll};
 
 use super::{
     Anchor, AnchorHandle, DirtyHandle, EngineContext, EngineContextMut, Generation, GenericAnchor,
@@ -29,7 +29,7 @@ impl crate::core::Engine for Engine {
 
     fn mount<I>(inner: I) -> Anchor<I::Output>
     where
-        I: 'static + AnchorInner<Self>,
+        I: 'static + AnchorCore<Self>,
     {
         DEFAULT_MOUNTER.with(|default_mounter| {
             let mut borrow1 = default_mounter.borrow_mut();

@@ -1,6 +1,6 @@
 use std::{cell::RefCell, rc::Rc};
 
-use crate::core::{AnchorInner, DirtyHandle as _, Engine as _, OutputContext, Poll, UpdateContext};
+use crate::core::{AnchorCore, DirtyHandle as _, Engine as _, OutputContext, Poll, UpdateContext};
 
 use super::{Anchor, AnchorHandle, DirtyHandle, Engine};
 
@@ -71,7 +71,7 @@ where
     }
 }
 
-impl<T> AnchorInner<Engine> for VarAnchor<T>
+impl<T> AnchorCore<Engine> for VarAnchor<T>
 where
     T: 'static,
 {

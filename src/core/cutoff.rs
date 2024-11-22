@@ -1,6 +1,6 @@
 use std::panic::Location;
 
-use crate::core::{Anchor, AnchorHandle, AnchorInner, Engine, OutputContext, Poll, UpdateContext};
+use crate::core::{Anchor, AnchorHandle, AnchorCore, Engine, OutputContext, Poll, UpdateContext};
 
 pub struct Cutoff<A, F> {
     pub(super) f: F,
@@ -8,7 +8,7 @@ pub struct Cutoff<A, F> {
     pub(super) location: &'static Location<'static>,
 }
 
-impl<F, In, E> AnchorInner<E> for Cutoff<(Anchor<In, E>,), F>
+impl<F, In, E> AnchorCore<E> for Cutoff<(Anchor<In, E>,), F>
 where
     E: Engine,
     F: for<'any> FnMut(&'any In) -> bool,

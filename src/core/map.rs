@@ -1,8 +1,6 @@
 use std::panic::Location;
 
-use crate::core::{
-    Anchor, AnchorHandle, AnchorInner, Engine, OutputContext, Poll, UpdateContext,
-};
+use crate::core::{Anchor, AnchorCore, AnchorHandle, Engine, OutputContext, Poll, UpdateContext};
 
 pub struct Map<A, F, Out> {
     pub(super) f: F,
@@ -14,7 +12,7 @@ pub struct Map<A, F, Out> {
 
 macro_rules! impl_tuple_map {
     ($([$output_type:ident, $num:tt])+) => {
-        impl<$($output_type,)+ E, F, Out> AnchorInner<E> for
+        impl<$($output_type,)+ E, F, Out> AnchorCore<E> for
             Map<($(Anchor<$output_type, E>,)+), F, Out>
         where
             F: for<'any> FnMut($(&'any $output_type),+) -> Out,
