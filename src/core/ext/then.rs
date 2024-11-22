@@ -27,7 +27,7 @@ macro_rules! impl_tuple_then {
             fn mark_dirty(&mut self, edge: &<E::AnchorHandle as AnchorHandle>::Token) {
                 $(
                     // only invalidate f_anchor if one of the lhs anchors is invalidated
-                    if edge == &self.anchors.$num.data.token() {
+                    if edge == &self.anchors.$num.token() {
                         self.lhs_stale = true;
                         return;
                     }

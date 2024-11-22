@@ -4,12 +4,14 @@
 //! you should never need to import things from here. `singlethread` should re-export anything
 //! you need to use `anchors`!
 
-use std::{fmt::Debug, hash::Hash, marker::PhantomData, panic::Location};
+use std::{fmt::Debug, hash::Hash, panic::Location};
 
 pub(crate) mod constant;
 
 mod ext;
 mod var;
+
+use crate::Anchor;
 
 pub use self::{
     constant::Constant,
@@ -33,51 +35,6 @@ pub enum Poll {
     /// The output value will eventually switch to Updated or Unchanged.
     Pending,
 }
-
-/// The main struct of the Anchors library. Represents a single value on the recomputation graph.
-pub struct Anchor<O, E: Engine + ?Sized> {
-    data: E::AnchorHandle,
-    phantom: PhantomData<O>,
-}
-
-impl<O, E: Engine> Anchor<O, E> {
-    #[track_caller]
-    pub fn constant(val: O) -> Self
-    where
-        O: 'static,
-    {
-        Constant::new_internal(val)
-    }
-
-    /// Returns the immutable, copyable, hashable, comparable engine-specific ID for this Anchor.
-    pub fn token(&self) -> <E::AnchorHandle as AnchorHandle>::Token {
-        self.data.token()
-    }
-
-    pub fn new_from_core(data: E::AnchorHandle) -> Self {
-        Self {
-            data,
-            phantom: PhantomData,
-        }
-    }
-}
-
-impl<O, E: Engine> Clone for Anchor<O, E> {
-    fn clone(&self) -> Self {
-        Self {
-            data: self.data.clone(),
-            phantom: PhantomData,
-        }
-    }
-}
-
-impl<O, E: Engine> PartialEq for Anchor<O, E> {
-    fn eq(&self, other: &Self) -> bool {
-        self.token() == other.token()
-    }
-}
-
-impl<O, E: Engine> Eq for Anchor<O, E> {}
 
 /// A reference to a particular `AnchorInner`. Each engine implements its own.
 pub trait AnchorHandle: Sized + Clone {

@@ -1,7 +1,4 @@
-use anchors::{
-    core::{Anchor, Var},
-    singlethread::Engine,
-};
+use anchors::{core::Var, singlethread::Engine, Anchor};
 
 const NODE_COUNT: u64 = 100;
 const ITER_COUNT: u64 = 500000;
