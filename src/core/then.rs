@@ -3,11 +3,23 @@ use std::panic::Location;
 use crate::core::{Anchor, AnchorCore, AnchorHandle, Engine, OutputContext, Poll, UpdateContext};
 
 pub struct Then<A, Out, F, E: Engine> {
+    pub(super) anchors: A,
     pub(super) f: F,
+    pub(super) location: &'static Location<'static>,
     pub(super) f_anchor: Option<Anchor<Out, E>>,
     pub(super) lhs_stale: bool,
-    pub(super) anchors: A,
-    pub(super) location: &'static Location<'static>,
+}
+
+impl<A, Out, F, E: Engine> Then<A, Out, F, E> {
+    pub fn new(anchors: A, f: F, location: &'static Location<'static>) -> Self {
+        Self {
+            anchors,
+            f,
+            location,
+            f_anchor: None,
+            lhs_stale: true,
+        }
+    }
 }
 
 macro_rules! impl_tuple_then {

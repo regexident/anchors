@@ -1,4 +1,4 @@
-use crate::core::MultiAnchor;
+use crate::MultiAnchor;
 
 use super::Var;
 
@@ -193,7 +193,10 @@ fn test_garbage_collection_wont_panic() {
 #[test]
 fn test_readme_example() {
     // example
-    use crate::singlethread::{Engine, MultiAnchor, Var};
+    use crate::{
+        singlethread::{Engine, Var},
+        MultiAnchor,
+    };
     let mut engine = Engine::new();
 
     // create a couple `Var`s
