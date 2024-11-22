@@ -1,7 +1,8 @@
+use std::panic::Location;
+
 use crate::expert::{
     Anchor, AnchorHandle, AnchorInner, Engine, OutputContext, Poll, UpdateContext,
 };
-use std::panic::Location;
 
 pub struct Map<A, F, Out> {
     pub(super) f: F,

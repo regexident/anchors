@@ -2,6 +2,7 @@ use std::num::NonZeroU64;
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Clone, Copy)]
 pub struct Generation(NonZeroU64);
+
 impl Generation {
     pub fn new() -> Generation {
         Generation(NonZeroU64::new(1).unwrap())
