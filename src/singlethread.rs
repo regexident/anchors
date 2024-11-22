@@ -18,9 +18,9 @@ mod node_guard;
 mod node_iterator;
 mod node_key;
 mod node_ptrs;
-mod var;
+mod variable;
 
-pub use self::{anchor_handle::*, engine::*, var::*};
+pub use self::{anchor_handle::*, engine::*, variable::*};
 
 use self::{
     anchor::*, context::*, context_mut::*, generation::*, graph::*, graph_guard::*, node::*,

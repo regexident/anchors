@@ -2,9 +2,9 @@ use anchors::{singlethread::*, MultiAnchor};
 
 fn main() {
     let mut engine = Engine::new();
-    let cat_count = Var::new(1);
-    let dog_count = Var::new(1);
-    let fish_count = Var::new(1);
+    let cat_count = Variable::new(1);
+    let dog_count = Variable::new(1);
+    let fish_count = Variable::new(1);
     let total_mammals = (&cat_count.watch(), &dog_count.watch()).map(|cats, dogs| cats + dogs);
     let total_animals = (&total_mammals, &fish_count.watch()).map(|mammals, fish| mammals + fish);
     let mammal_callback =

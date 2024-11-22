@@ -109,9 +109,9 @@ mod test {
     fn collect() {
         let mut engine = Engine::new();
 
-        let a = Var::new(1);
-        let b = Var::new(2);
-        let c = Var::new(5);
+        let a = Variable::new(1);
+        let b = Variable::new(2);
+        let c = Variable::new(5);
 
         let nums: Anchor<Vec<_>> = vec![a.watch(), b.watch(), c.watch()].into_iter().collect();
         let sum: Anchor<usize> = nums.map(|nums| nums.iter().sum());

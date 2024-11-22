@@ -5,7 +5,7 @@ use crate::core::{AnchorCore, DirtyHandle as _, Engine as _, OutputContext, Poll
 use super::{Anchor, AnchorHandle, DirtyHandle, Engine};
 
 /// A variable that exposes an anchor for its value.
-pub struct Var<T> {
+pub struct Variable<T> {
     inner: Rc<RefCell<VarShared<T>>>,
     anchor: Anchor<T>,
 }
@@ -23,7 +23,7 @@ struct VarShared<T> {
     value_changed: bool,
 }
 
-impl<T> Clone for Var<T> {
+impl<T> Clone for Variable<T> {
     fn clone(&self) -> Self {
         Self {
             inner: self.inner.clone(),
@@ -32,19 +32,19 @@ impl<T> Clone for Var<T> {
     }
 }
 
-impl<T> Var<T>
+impl<T> Variable<T>
 where
     T: 'static,
 {
     /// Creates a new Var
-    pub fn new(val: T) -> Var<T> {
+    pub fn new(val: T) -> Variable<T> {
         let val = Rc::new(val);
         let inner = Rc::new(RefCell::new(VarShared {
             dirty_handle: None,
             val: val.clone(),
             value_changed: true,
         }));
-        Var {
+        Variable {
             inner: inner.clone(),
             anchor: Engine::mount(VarAnchor { inner, val }),
         }

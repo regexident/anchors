@@ -122,7 +122,7 @@ pub trait UpdateContext {
     /// non incremental means.
     ///
     /// For instance, perhaps this `AnchorCore`s value represents the current time, or
-    /// it's a `Var` that has a setter function.
+    /// it's a `Variable` that has a setter function.
     fn dirty_handle(&mut self) -> <Self::Engine as Engine>::DirtyHandle;
 }
 

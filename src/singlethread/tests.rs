@@ -1,12 +1,12 @@
 use crate::MultiAnchor;
 
-use super::Var;
+use super::Variable;
 
 #[test]
 fn test_cutoff_simple_observed() {
     let mut engine = crate::singlethread::Engine::new();
     let (v, v_setter) = {
-        let var = Var::new(100i32);
+        let var = Variable::new(100i32);
         (var.watch(), var)
     };
     let mut old_val = 0i32;
@@ -34,7 +34,7 @@ fn test_cutoff_simple_observed() {
 fn test_cutoff_simple_unobserved() {
     let mut engine = crate::singlethread::Engine::new();
     let (v, v_setter) = {
-        let var = Var::new(100i32);
+        let var = Variable::new(100i32);
         (var.watch(), var)
     };
     let mut old_val = 0i32;
@@ -64,7 +64,7 @@ fn test_refmap_simple() {
 
     let mut engine = crate::singlethread::Engine::new();
     let (v, _) = {
-        let var = Var::new((NoClone(1), NoClone(2)));
+        let var = Variable::new((NoClone(1), NoClone(2)));
         (var.watch(), var)
     };
     let a = v.refmap(|(a, _)| a);
@@ -79,7 +79,7 @@ fn test_refmap_simple() {
 fn test_split_simple() {
     let mut engine = crate::singlethread::Engine::new();
     let (v, _) = {
-        let var = Var::new((1usize, 2usize, 3usize));
+        let var = Variable::new((1usize, 2usize, 3usize));
         (var.watch(), var)
     };
     let (a, b, c) = v.split();
@@ -92,11 +92,11 @@ fn test_split_simple() {
 fn test_map_simple() {
     let mut engine = crate::singlethread::Engine::new();
     let (v1, _v1_setter) = {
-        let var = Var::new(1usize);
+        let var = Variable::new(1usize);
         (var.watch(), var)
     };
     let (v2, _v2_setter) = {
-        let var = Var::new(123usize);
+        let var = Variable::new(123usize);
         (var.watch(), var)
     };
     let _a2 = v1.map(|num1| {
@@ -115,15 +115,15 @@ fn test_map_simple() {
 fn test_then_simple() {
     let mut engine = crate::singlethread::Engine::new();
     let (v1, v1_setter) = {
-        let var = Var::new(true);
+        let var = Variable::new(true);
         (var.watch(), var)
     };
     let (v2, _v2_setter) = {
-        let var = Var::new(10usize);
+        let var = Variable::new(10usize);
         (var.watch(), var)
     };
     let (v3, _v3_setter) = {
-        let var = Var::new(20usize);
+        let var = Variable::new(20usize);
         (var.watch(), var)
     };
     let a = v1.then(move |val| if *val { v2.clone() } else { v3.clone() });
@@ -142,7 +142,7 @@ fn test_observed_marking() {
 
     let mut engine = crate::singlethread::Engine::new();
     let (v1, _v1_setter) = {
-        let var = Var::new(1usize);
+        let var = Variable::new(1usize);
         (var.watch(), var)
     };
     let a = v1.map(|num1| *num1 + 1);
@@ -182,7 +182,7 @@ fn test_observed_marking() {
 fn test_garbage_collection_wont_panic() {
     let mut engine = crate::singlethread::Engine::new();
     let (v1, _v1_setter) = {
-        let var = Var::new(1usize);
+        let var = Variable::new(1usize);
         (var.watch(), var)
     };
     engine.get(&v1);
@@ -194,22 +194,22 @@ fn test_garbage_collection_wont_panic() {
 fn test_readme_example() {
     // example
     use crate::{
-        singlethread::{Engine, Var},
+        singlethread::{Engine, Variable},
         MultiAnchor,
     };
     let mut engine = Engine::new();
 
-    // create a couple `Var`s
+    // create a couple `Variable`s
     let (my_name, my_name_updater) = {
-        let var = Var::new("Bob".to_string());
+        let var = Variable::new("Bob".to_string());
         (var.watch(), var)
     };
     let (my_unread, my_unread_updater) = {
-        let var = Var::new(999usize);
+        let var = Variable::new(999usize);
         (var.watch(), var)
     };
 
-    // `my_name` is a `Var`, our first type of `Anchor`. we can pull an `Anchor`'s value out with our `engine`:
+    // `my_name` is a `Variable`, our first type of `Anchor`. we can pull an `Anchor`'s value out with our `engine`:
     assert_eq!(&engine.get(&my_name), "Bob");
     assert_eq!(engine.get(&my_unread), 999);
 
@@ -221,7 +221,7 @@ fn test_readme_example() {
     });
     assert_eq!(engine.get(&my_greeting), "Hello, Bob!"); // prints "calculating name!"
 
-    // we can update a `Var` with its updater. values are cached unless one of its dependencies changes
+    // we can update a `Variable` with its updater. values are cached unless one of its dependencies changes
     assert_eq!(engine.get(&my_greeting), "Hello, Bob!"); // doesn't print anything
     my_name_updater.set("Robo".to_string());
     assert_eq!(engine.get(&my_greeting), "Hello, Robo!"); // prints "calculating name!"
@@ -236,7 +236,7 @@ fn test_readme_example() {
 
     // just like a future, you can dynamically decide which `Anchor` to use with `then`:
     let (insulting_name, _) = {
-        let var = Var::new("Lazybum".to_string());
+        let var = Variable::new("Lazybum".to_string());
         (var.watch(), var)
     };
     let dynamic_name = my_unread.then(move |unread| {
