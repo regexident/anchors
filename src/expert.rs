@@ -101,7 +101,7 @@ pub trait Engine: 'static {
 /// Allows a node with non-Anchors inputs to manually mark itself as dirty. Each engine implements its own.
 pub trait DirtyHandle {
     /// Indicates that the Anchor associated with this `DirtyHandle` may have a changed its output, and should
-    /// be repolled.
+    /// be re-polled.
     fn mark_dirty(&self);
 }
 
@@ -181,7 +181,7 @@ where
     where
         'slf: 'out;
 
-    /// An optional function to report the track_caller-derived callsite where
+    /// An optional function to report the track_caller-derived call-site where
     /// this Anchor was created. Useful for debugging purposes.
     fn debug_location(&self) -> Option<(&'static str, &'static Location<'static>)> {
         None
