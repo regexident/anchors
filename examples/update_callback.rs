@@ -1,5 +1,3 @@
-use std::cell::RefCell;
-
 use anchors::{
     expert::{MultiAnchor, Var},
     singlethread::*,
