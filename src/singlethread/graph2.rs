@@ -9,12 +9,12 @@ use arena_graph::raw as ag;
 
 use super::{AnchorDebugInfo, Generation, GenericAnchor};
 
-#[derive(PartialEq, Clone, Copy, Debug)]
+#[derive(Copy, Clone, PartialEq, Debug)]
 pub struct NodeGuard<'gg>(ag::NodeGuard<'gg, Node>);
 
 type NodePtr = ag::NodePtr<Node>;
 
-#[derive(Clone, Copy, Default, PartialEq, Eq, Hash, Debug)]
+#[derive(Copy, Clone, Default, Eq, PartialEq, Hash, Debug)]
 pub enum RecalcState {
     #[default]
     Needed,
@@ -41,7 +41,7 @@ pub struct Graph2 {
     free_head: Box<Cell<Option<NodePtr>>>,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Copy, Clone)]
 pub struct Graph2Guard<'gg> {
     nodes: ag::GraphGuard<'gg, Node>,
     graph: &'gg Graph2,
@@ -71,7 +71,7 @@ pub struct Node {
     pub ptrs: NodePtrs,
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
+#[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
 pub struct NodeKey {
     ptr: NodePtr,
     token: u32,
