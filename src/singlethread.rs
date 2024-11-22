@@ -70,7 +70,10 @@ impl crate::expert::Engine for Engine {
     type AnchorHandle = AnchorHandle;
     type DirtyHandle = DirtyHandle;
 
-    fn mount<I: 'static + AnchorInner<Self>>(inner: I) -> Anchor<I::Output> {
+    fn mount<I>(inner: I) -> Anchor<I::Output>
+    where
+        I: 'static + AnchorInner<Self>,
+    {
         DEFAULT_MOUNTER.with(|default_mounter| {
             let mut borrow1 = default_mounter.borrow_mut();
             let this = borrow1
@@ -113,7 +116,10 @@ impl Engine {
     /// when *any* Anchor in the graph is retrieved. If you get an output value fairly
     /// often, it's best to mark it as Observed so that Anchors can calculate its
     /// dependencies faster.
-    pub fn mark_observed<O: 'static>(&mut self, anchor: &Anchor<O>) {
+    pub fn mark_observed<O>(&mut self, anchor: &Anchor<O>)
+    where
+        O: 'static,
+    {
         self.graph.with(|graph| {
             let node = graph.get(anchor.token()).unwrap();
             node.observed.set(true);
@@ -126,7 +132,10 @@ impl Engine {
     /// Marks an Anchor as unobserved. If the `anchor` has parents that are necessary
     /// because `anchor` was previously observed, those parents will be unmarked as
     /// necessary.
-    pub fn mark_unobserved<O: 'static>(&mut self, anchor: &Anchor<O>) {
+    pub fn mark_unobserved<O>(&mut self, anchor: &Anchor<O>)
+    where
+        O: 'static,
+    {
         self.graph.with(|graph| {
             let node = graph.get(anchor.token()).unwrap();
             node.observed.set(false);
@@ -147,7 +156,10 @@ impl Engine {
 
     /// Retrieves the value of an Anchor, recalculating dependencies as necessary to get the
     /// latest value.
-    pub fn get<O: 'static + Clone>(&mut self, anchor: &Anchor<O>) -> O {
+    pub fn get<O>(&mut self, anchor: &Anchor<O>) -> O
+    where
+        O: 'static + Clone,
+    {
         // stabilize once before, since the stabilization process may mark our requested node
         // as dirty
         self.stabilize();
@@ -368,9 +380,10 @@ struct EngineContextMut<'eng, 'gg> {
 impl<'eng> OutputContext<'eng> for EngineContext<'eng> {
     type Engine = Engine;
 
-    fn get<'out, O: 'static>(&self, anchor: &Anchor<O>) -> &'out O
+    fn get<'out, O>(&self, anchor: &Anchor<O>) -> &'out O
     where
         'eng: 'out,
+        O: 'static,
     {
         self.engine.graph.with(|graph| {
             let node = graph.get(anchor.token()).unwrap();
@@ -394,9 +407,10 @@ impl<'eng> OutputContext<'eng> for EngineContext<'eng> {
 impl<'eng, 'gg> UpdateContext for EngineContextMut<'eng, 'gg> {
     type Engine = Engine;
 
-    fn get<'out, 'slf, O: 'static>(&'slf self, anchor: &Anchor<O>) -> &'out O
+    fn get<'out, 'slf, O>(&'slf self, anchor: &Anchor<O>) -> &'out O
     where
         'slf: 'out,
+        O: 'static,
     {
         self.engine.graph.with(|graph| {
             let node = graph.get(anchor.token()).unwrap();
@@ -417,7 +431,10 @@ impl<'eng, 'gg> UpdateContext for EngineContextMut<'eng, 'gg> {
         })
     }
 
-    fn request<'out, O: 'static>(&mut self, anchor: &Anchor<O>, necessary: bool) -> Poll {
+    fn request<'out, O>(&mut self, anchor: &Anchor<O>, necessary: bool) -> Poll
+    where
+        O: 'static,
+    {
         let child = self.graph.get(anchor.token()).unwrap();
         let height_already_increased = match graph2::ensure_height_increases(child, self.node) {
             Ok(v) => v,
@@ -450,7 +467,10 @@ impl<'eng, 'gg> UpdateContext for EngineContextMut<'eng, 'gg> {
         }
     }
 
-    fn unrequest<'out, O: 'static>(&mut self, anchor: &Anchor<O>) {
+    fn unrequest<'out, O>(&mut self, anchor: &Anchor<O>)
+    where
+        O: 'static,
+    {
         let child = self.graph.get(anchor.token()).unwrap();
         self.node.remove_necessary_child(child);
         Engine::update_necessary_children(child);
@@ -476,7 +496,10 @@ trait GenericAnchor {
     fn debug_info(&self) -> AnchorDebugInfo;
 }
 
-impl<I: 'static + AnchorInner<Engine>> GenericAnchor for I {
+impl<I> GenericAnchor for I
+where
+    I: 'static + AnchorInner<Engine>,
+{
     fn dirty(&mut self, child: &NodeKey) {
         AnchorInner::dirty(self, child)
     }

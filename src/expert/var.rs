@@ -23,7 +23,10 @@ pub struct Var<T, E: Engine> {
     anchor: Anchor<T, E>,
 }
 
-impl<T, E: Engine> Clone for Var<T, E> {
+impl<T, E> Clone for Var<T, E>
+where
+    E: Engine,
+{
     fn clone(&self) -> Self {
         Self {
             inner: self.inner.clone(),
@@ -32,7 +35,11 @@ impl<T, E: Engine> Clone for Var<T, E> {
     }
 }
 
-impl<T: 'static, E: Engine> Var<T, E> {
+impl<T, E> Var<T, E>
+where
+    T: 'static,
+    E: Engine,
+{
     /// Creates a new Var
     pub fn new(val: T) -> Var<T, E> {
         let val = Rc::new(val);
@@ -68,7 +75,11 @@ impl<T: 'static, E: Engine> Var<T, E> {
     }
 }
 
-impl<E: Engine, T: 'static> AnchorInner<E> for VarAnchor<T, E> {
+impl<E, T> AnchorInner<E> for VarAnchor<T, E>
+where
+    E: Engine,
+    T: 'static,
+{
     type Output = T;
 
     fn dirty(&mut self, _edge: &<E::AnchorHandle as AnchorHandle>::Token) {
