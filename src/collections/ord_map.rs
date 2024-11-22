@@ -8,26 +8,23 @@ impl<E: Engine, K: 'static + Ord + Clone + PartialEq, V: 'static + Clone + Parti
     Anchor<Dict<K, V>, E>
 {
     // TODO MERGE FN
-    pub fn inner_filter<F: 'static + FnMut(&K, &V) -> bool>(
+    pub fn inner_filter(
         &self,
-        mut f: F,
+        mut f: impl 'static + FnMut(&K, &V) -> bool,
     ) -> Anchor<Dict<K, V>, E> {
         self.inner_filter_map(move |k, v| if f(k, v) { Some(v.clone()) } else { None })
     }
 
-    pub fn inner_map<F: 'static + FnMut(&K, &V) -> T, T: 'static + Clone + PartialEq>(
+    pub fn inner_map<T: 'static + Clone + PartialEq>(
         &self,
-        mut f: F,
+        mut f: impl 'static + FnMut(&K, &V) -> T,
     ) -> Anchor<Dict<K, T>, E> {
         self.inner_filter_map(move |k, v| Some(f(k, v)))
     }
 
-    pub fn inner_filter_map<
-        F: 'static + FnMut(&K, &V) -> Option<T>,
-        T: 'static + Clone + PartialEq,
-    >(
+    pub fn inner_filter_map<T: 'static + Clone + PartialEq>(
         &self,
-        mut f: F,
+        mut f: impl 'static + FnMut(&K, &V) -> Option<T>,
     ) -> Anchor<Dict<K, T>, E> {
         self.inner_unordered_fold(Dict::new(), move |out, diff_item| {
             match diff_item {
@@ -58,13 +55,10 @@ impl<E: Engine, K: 'static + Ord + Clone + PartialEq, V: 'static + Clone + Parti
         })
     }
 
-    pub fn inner_unordered_fold<
-        T: 'static + PartialEq + Clone,
-        F: 'static + for<'a> FnMut(&mut T, DiffItem<'a, K, V>) -> bool,
-    >(
+    pub fn inner_unordered_fold<T: 'static + PartialEq + Clone>(
         &self,
         initial_state: T,
-        mut f: F,
+        mut f: impl 'static + for<'a> FnMut(&mut T, DiffItem<'a, K, V>) -> bool,
     ) -> Anchor<T, E> {
         let mut last_observation = Dict::new();
         self.map_mut(initial_state, move |out, this| {

@@ -75,7 +75,7 @@ impl<E: Engine, T: 'static> AnchorInner<E> for VarAnchor<T, E> {
         panic!("somehow an input was dirtied on VarAnchor; it never has any inputs to dirty")
     }
 
-    fn poll_updated<G: UpdateContext<Engine = E>>(&mut self, ctx: &mut G) -> Poll {
+    fn poll_updated(&mut self, ctx: &mut impl UpdateContext<Engine = E>) -> Poll {
         let mut inner = self.inner.borrow_mut();
         let first_update = inner.dirty_handle.is_none();
         if first_update {
@@ -91,9 +91,9 @@ impl<E: Engine, T: 'static> AnchorInner<E> for VarAnchor<T, E> {
         res
     }
 
-    fn output<'slf, 'out, G: OutputContext<'out, Engine = E>>(
+    fn output<'slf, 'out>(
         &'slf self,
-        _ctx: &mut G,
+        _ctx: &mut impl OutputContext<'out, Engine = E>,
     ) -> &'out Self::Output
     where
         'slf: 'out,

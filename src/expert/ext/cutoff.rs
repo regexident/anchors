@@ -21,7 +21,7 @@ where
         // noop
     }
 
-    fn poll_updated<G: UpdateContext<Engine = E>>(&mut self, ctx: &mut G) -> Poll {
+    fn poll_updated(&mut self, ctx: &mut impl UpdateContext<Engine = E>) -> Poll {
         let upstream_poll = ctx.request(&self.anchors.0, true);
         if upstream_poll != Poll::Updated {
             return upstream_poll;
@@ -35,9 +35,9 @@ where
         }
     }
 
-    fn output<'slf, 'out, G: OutputContext<'out, Engine = E>>(
+    fn output<'slf, 'out>(
         &'slf self,
-        ctx: &mut G,
+        ctx: &mut impl OutputContext<'out, Engine = E>,
     ) -> &'out Self::Output
     where
         'slf: 'out,

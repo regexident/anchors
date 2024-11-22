@@ -161,15 +161,15 @@ pub trait AnchorInner<E: Engine + ?Sized> {
     /// not. If some requested value from `ctx` is `Pending`, this method should
     /// return `Poll::Pending`; otherwise it must finish recalculation and report
     /// either `Poll::Updated` or `Poll::Unchanged`.
-    fn poll_updated<G: UpdateContext<Engine = E>>(&mut self, ctx: &mut G) -> Poll;
+    fn poll_updated(&mut self, ctx: &mut impl UpdateContext<Engine = E>) -> Poll;
 
     /// Called by the engine to get the current output value of this `AnchorInner`. This
     /// is *only* called after this `AnchorInner` reported in the return value from
     /// `poll_updated` the value was ready. If `dirty` is called, this function will not
     /// be called until `poll_updated` returns a non-Pending value.
-    fn output<'slf, 'out, G: OutputContext<'out, Engine = E>>(
+    fn output<'slf, 'out>(
         &'slf self,
-        ctx: &mut G,
+        ctx: &mut impl OutputContext<'out, Engine = E>,
     ) -> &'out Self::Output
     where
         'slf: 'out;

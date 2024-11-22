@@ -19,13 +19,13 @@ where
         // noop
     }
 
-    fn poll_updated<G: UpdateContext<Engine = E>>(&mut self, ctx: &mut G) -> Poll {
+    fn poll_updated(&mut self, ctx: &mut impl UpdateContext<Engine = E>) -> Poll {
         ctx.request(&self.anchors.0, true)
     }
 
-    fn output<'slf, 'out, G: OutputContext<'out, Engine = E>>(
+    fn output<'slf, 'out>(
         &'slf self,
-        ctx: &mut G,
+        ctx: &mut impl OutputContext<'out, Engine = E>,
     ) -> &'out Self::Output
     where
         'slf: 'out,

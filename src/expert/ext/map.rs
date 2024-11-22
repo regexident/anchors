@@ -30,9 +30,9 @@ macro_rules! impl_tuple_map {
                 self.output_stale = true;
             }
 
-            fn poll_updated<G: UpdateContext<Engine=E>>(
+            fn poll_updated(
                 &mut self,
-                ctx: &mut G,
+                ctx: &mut impl UpdateContext<Engine=E>,
             ) -> Poll {
                 if !self.output_stale && self.output.is_some() {
                     return Poll::Unchanged;
@@ -71,9 +71,9 @@ macro_rules! impl_tuple_map {
                 Poll::Unchanged
             }
 
-            fn output<'slf, 'out, G: OutputContext<'out, Engine=E>>(
+            fn output<'slf, 'out>(
                 &'slf self,
-                _ctx: &mut G,
+                _ctx: &mut impl OutputContext<'out, Engine=E>,
             ) -> &'out Self::Output
             where
                 'slf: 'out,
