@@ -4,7 +4,7 @@
 //! you should never need to import things from here. `singlethread` should re-export anything
 //! you need to use `anchors`!
 
-use std::{marker::PhantomData, panic::Location};
+use std::{fmt::Debug, hash::Hash, marker::PhantomData, panic::Location};
 
 pub(crate) mod constant;
 
@@ -79,7 +79,7 @@ impl<O, E: Engine> Eq for Anchor<O, E> {}
 
 /// A reference to a particular `AnchorInner`. Each engine implements its own.
 pub trait AnchorHandle: Sized + Clone {
-    type Token: Sized + Clone + Copy + PartialEq + Eq + std::hash::Hash + std::fmt::Debug;
+    type Token: Sized + Clone + Copy + PartialEq + Eq + Hash + Debug;
 
     /// Returns a Copyable, comparable, hashable ID corresponding to this AnchorHandle.
     /// Some engines may garbage collect an AnchorInner when no more AnchorHandles pointing
