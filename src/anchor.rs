@@ -18,8 +18,8 @@ impl<O, E: Engine> Anchor<O, E> {
     }
 
     /// Returns the immutable, copyable, hashable, comparable engine-specific ID for this Anchor.
-    pub fn token(&self) -> <E::AnchorHandle as AnchorHandle>::Token {
-        self.data.token()
+    pub fn key(&self) -> <E::AnchorHandle as AnchorHandle>::AnchorKey {
+        self.data.key()
     }
 
     pub fn new_from_core(data: E::AnchorHandle) -> Self {
@@ -41,7 +41,7 @@ impl<O, E: Engine> Clone for Anchor<O, E> {
 
 impl<O, E: Engine> PartialEq for Anchor<O, E> {
     fn eq(&self, other: &Self) -> bool {
-        self.token() == other.token()
+        self.key() == other.key()
     }
 }
 

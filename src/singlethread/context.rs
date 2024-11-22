@@ -21,7 +21,7 @@ impl<'eng> OutputContext<'eng> for EngineContext<'eng> {
         O: 'static,
     {
         self.engine.with(|graph| {
-            let node = graph.get(anchor.token()).unwrap();
+            let node = graph.get(anchor.key().node_key).unwrap();
             if graph::recalc_state(node) != RecalcState::Ready {
                 panic!("attempted to get node that was not previously requested")
             }

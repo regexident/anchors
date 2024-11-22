@@ -1,6 +1,6 @@
 use std::panic::Location;
 
-use crate::core::{Anchor, AnchorHandle, AnchorCore, Engine, OutputContext, Poll, UpdateContext};
+use crate::core::{Anchor, AnchorCore, AnchorHandle, Engine, OutputContext, Poll, UpdateContext};
 
 /// An Anchor type for immutable values.
 pub struct Constant<T> {
@@ -51,7 +51,7 @@ where
 {
     type Output = T;
 
-    fn mark_dirty(&mut self, child: &<E::AnchorHandle as AnchorHandle>::Token) {
+    fn mark_dirty(&mut self, child: <E::AnchorHandle as AnchorHandle>::AnchorKey) {
         panic!(
             "Constant never has any inputs; dirty should not have been called. alleged child: {:?}",
             child

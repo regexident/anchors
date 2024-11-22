@@ -2,32 +2,44 @@ use std::{cell::Cell, rc::Rc};
 
 use super::{free, NodeKey};
 
-/// Singlethread's implementation of Anchors' `AnchorHandle`, the engine-specific handle that sits inside an `Anchor`.
+/// A key uniquely identifying a handle within a computational graph.
+#[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
+pub struct AnchorKey {
+    pub(super) node_key: NodeKey,
+}
+
+impl AnchorKey {
+    pub(super) fn new(node_key: NodeKey) -> Self {
+        Self { node_key }
+    }
+}
+
+/// The handle of an anchor from a single-threaded computation graph.
 #[derive(Debug)]
 pub struct AnchorHandle {
-    key: NodeKey,
+    node_key: NodeKey,
     still_alive: Rc<Cell<bool>>,
 }
 
 impl AnchorHandle {
-    pub(super) fn new(key: NodeKey, still_alive: Rc<Cell<bool>>) -> Self {
-        Self { key, still_alive }
-    }
-
-    #[allow(dead_code)]
-    pub(super) fn key(&self) -> NodeKey {
-        self.key
+    pub(super) fn new(node_key: NodeKey, still_alive: Rc<Cell<bool>>) -> Self {
+        Self {
+            node_key,
+            still_alive,
+        }
     }
 }
 
 impl Clone for AnchorHandle {
     fn clone(&self) -> Self {
         if self.still_alive.get() {
-            let count = &unsafe { self.key.ptr.lookup_unchecked() }.ptrs.handle_count;
+            let count = &unsafe { self.node_key.ptr.lookup_unchecked() }
+                .ptrs
+                .handle_count;
             count.set(count.get() + 1);
         }
         AnchorHandle {
-            key: self.key,
+            node_key: self.node_key,
             still_alive: self.still_alive.clone(),
         }
     }
@@ -36,20 +48,22 @@ impl Clone for AnchorHandle {
 impl Drop for AnchorHandle {
     fn drop(&mut self) {
         if self.still_alive.get() {
-            let count = &unsafe { self.key.ptr.lookup_unchecked() }.ptrs.handle_count;
+            let count = &unsafe { self.node_key.ptr.lookup_unchecked() }
+                .ptrs
+                .handle_count;
             let new_count = count.get() - 1;
             count.set(new_count);
             if new_count == 0 {
-                unsafe { free(self.key.ptr) };
+                unsafe { free(self.node_key.ptr) };
             }
         }
     }
 }
 
 impl crate::core::AnchorHandle for AnchorHandle {
-    type Token = NodeKey;
+    type AnchorKey = AnchorKey;
 
-    fn token(&self) -> NodeKey {
-        self.key
+    fn key(&self) -> Self::AnchorKey {
+        AnchorKey::new(self.node_key)
     }
 }

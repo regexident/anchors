@@ -23,8 +23,10 @@ impl<'gg> GraphGuard<'gg> {
 
     #[cfg(test)]
     pub(super) fn insert_testing_guard(&self) -> NodeGuard<'gg> {
+        use crate::core::AnchorHandle as _;
+
         let handle = self.graph.insert_testing();
-        let guard = self.get(handle.key()).unwrap();
+        let guard = self.get(handle.key().node_key).unwrap();
         std::mem::forget(handle);
         guard
     }

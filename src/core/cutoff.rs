@@ -1,6 +1,6 @@
 use std::panic::Location;
 
-use crate::core::{Anchor, AnchorHandle, AnchorCore, Engine, OutputContext, Poll, UpdateContext};
+use crate::core::{Anchor, AnchorCore, AnchorHandle, Engine, OutputContext, Poll, UpdateContext};
 
 pub struct Cutoff<A, F> {
     pub(super) f: F,
@@ -16,7 +16,7 @@ where
 {
     type Output = In;
 
-    fn mark_dirty(&mut self, _edge: &<E::AnchorHandle as AnchorHandle>::Token) {
+    fn mark_dirty(&mut self, _edge: <E::AnchorHandle as AnchorHandle>::AnchorKey) {
         // noop
     }
 

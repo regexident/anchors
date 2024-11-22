@@ -76,7 +76,7 @@ impl Engine {
         O: 'static,
     {
         self.with(|graph| {
-            let node = graph.get(anchor.token()).unwrap();
+            let node = graph.get(anchor.key().node_key).unwrap();
             node.observed.set(true);
             if super::graph::recalc_state(node) != RecalcState::Ready {
                 graph.queue_recalc(node);
@@ -92,7 +92,7 @@ impl Engine {
         O: 'static,
     {
         self.with(|graph| {
-            let node = graph.get(anchor.token()).unwrap();
+            let node = graph.get(anchor.key().node_key).unwrap();
             node.observed.set(false);
             Self::update_necessary_children(node);
         })
@@ -119,7 +119,7 @@ impl Engine {
         // as dirty
         self.stabilize();
         self.with(|graph| {
-            let anchor_node = graph.get(anchor.token()).unwrap();
+            let anchor_node = graph.get(anchor.key().node_key).unwrap();
             if super::graph::recalc_state(anchor_node) != RecalcState::Ready {
                 graph.queue_recalc(anchor_node);
                 // stabilize again, to make sure our target node that is now in the queue is up-to-date
@@ -127,7 +127,7 @@ impl Engine {
                 // to make sure we don't unnecessarily increment generation number
                 self.stabilize0();
             }
-            let target_anchor = &graph.get(anchor.token()).unwrap().anchor;
+            let target_anchor = &graph.get(anchor.key().node_key).unwrap().anchor;
             let borrow = target_anchor.borrow();
             borrow
                 .as_ref()
@@ -260,7 +260,7 @@ impl Engine {
 
     pub fn check_observed<T>(&self, anchor: &Anchor<T>) -> ObservedState {
         self.with(|graph| {
-            let node = graph.get(anchor.token()).unwrap();
+            let node = graph.get(anchor.key().node_key).unwrap();
             Self::check_observed_raw(node)
         })
     }
