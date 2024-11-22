@@ -182,7 +182,7 @@ where
     /// use anchors::{MultiAnchor, singlethread::*};
     ///
     /// let mut engine = Engine::new();
-    /// let num = Var::new(1i32);
+    /// let num = Variable::new(1i32);
     /// let cutoff = {
     ///     let mut old_num_opt: Option<i32> = None;
     ///     num.watch().cutoff(move |num| {

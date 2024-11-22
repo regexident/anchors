@@ -1,5 +1,5 @@
 use anchors::{
-    singlethread::{Engine, Var},
+    singlethread::{Engine, Variable},
     Anchor,
 };
 
@@ -9,7 +9,7 @@ const OBSERVED: bool = true;
 
 fn main() {
     let mut engine = Engine::new_with_max_height(128);
-    let first_num = Var::new(0u64);
+    let first_num = Variable::new(0u64);
     let mut node = first_num.watch();
     for _ in 0..NODE_COUNT {
         node = node.map(|val| val + 1);
@@ -22,7 +22,7 @@ fn main() {
 }
 
 #[inline(never)]
-fn iter(node: Anchor<u64, Engine>, mut engine: Engine, set_first_num: Var<u64>) {
+fn iter(node: Anchor<u64, Engine>, mut engine: Engine, set_first_num: Variable<u64>) {
     let mut update_number = 0;
     for i in 0..ITER_COUNT {
         if i % (ITER_COUNT / 100) == 0 {

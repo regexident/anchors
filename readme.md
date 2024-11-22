@@ -16,7 +16,7 @@
 use crate::singlethread::*;
 let mut engine = Engine::new();
 
-// create a couple `Var`s
+// create a couple `Variable`s
 let (my_name, my_name_updater) = {
     let var = Var::new("Bob".to_string());
     (var.watch(), var)
@@ -26,7 +26,7 @@ let (my_unread, my_unread_updater) = {
     (var.watch(), var)
 };
 
-// `my_name` is a `Var`, our first type of `Anchor`. we can pull an `Anchor`'s value out with our `engine`:
+// `my_name` is a `Variable`, our first type of `Anchor`. we can pull an `Anchor`'s value out with our `engine`:
 assert_eq!(&engine.get(&my_name), "Bob");
 assert_eq!(engine.get(&my_unread), 999);
 
@@ -38,7 +38,7 @@ let my_greeting = my_name.clone().map(|name| {
 });
 assert_eq!(engine.get(&my_greeting), "Hello, Bob!"); // prints "calculating name!"
 
-// we can update a `Var` with its updater. values are cached unless one of its dependencies changes
+// we can update a `Variable` with its updater. values are cached unless one of its dependencies changes
 assert_eq!(engine.get(&my_greeting), "Hello, Bob!"); // doesn't print anything
 my_name_updater.set("Robo".to_string());
 assert_eq!(engine.get(&my_greeting), "Hello, Robo!"); // prints "calculating name!"
