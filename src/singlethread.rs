@@ -35,7 +35,7 @@ thread_local! {
 }
 
 /// Indicates whether the node is a part of some observed calculation.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub enum ObservedState {
     /// The node has been marked as observed directly via `mark_observed`.
     Observed,
@@ -342,7 +342,7 @@ fn mark_dirty0<'a>(graph: Graph2Guard<'a>, next: NodeGuard<'a>) {
 }
 
 /// Single-threaded implementation of Anchors' `DirtyHandle`, which allows a node with non-Anchors inputs to manually mark itself as dirty.
-#[derive(Debug, Clone)]
+#[derive(Clone, Debug)]
 pub struct DirtyHandle {
     num: NodeKey,
     dirty_marks: Rc<RefCell<Vec<NodeKey>>>,
@@ -500,7 +500,7 @@ impl<I: 'static + AnchorInner<Engine>> GenericAnchor for I {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Copy, Clone, Debug)]
 struct AnchorDebugInfo {
     location: Option<(&'static str, &'static Location<'static>)>,
     type_info: &'static str,

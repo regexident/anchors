@@ -1,6 +1,6 @@
 use std::num::NonZeroU64;
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Clone, Copy)]
+#[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
 pub struct Generation(NonZeroU64);
 
 impl Generation {

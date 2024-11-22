@@ -17,7 +17,7 @@ pub use var::Var;
 
 /// Indicates whether a value is ready for reading, and if it is, whether it's changed
 /// since the last read.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub enum Poll {
     /// Indicates the polled value is ready for reading. Either this is the first read,
     /// or the value has changed since the last read.
