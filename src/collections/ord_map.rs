@@ -2,9 +2,7 @@ use im::{ordmap::DiffItem, OrdMap};
 
 use crate::expert::{Anchor, Engine};
 
-pub type Dict<K, V> = OrdMap<K, V>;
-
-impl<E, K, V> Anchor<Dict<K, V>, E>
+impl<E, K, V> Anchor<OrdMap<K, V>, E>
 where
     E: Engine,
     K: Ord + Clone + PartialEq + 'static,
@@ -14,11 +12,11 @@ where
     pub fn inner_filter(
         &self,
         mut f: impl 'static + FnMut(&K, &V) -> bool,
-    ) -> Anchor<Dict<K, V>, E> {
+    ) -> Anchor<OrdMap<K, V>, E> {
         self.inner_filter_map(move |k, v| if f(k, v) { Some(v.clone()) } else { None })
     }
 
-    pub fn inner_map<T>(&self, mut f: impl 'static + FnMut(&K, &V) -> T) -> Anchor<Dict<K, T>, E>
+    pub fn inner_map<T>(&self, mut f: impl 'static + FnMut(&K, &V) -> T) -> Anchor<OrdMap<K, T>, E>
     where
         T: 'static + Clone + PartialEq,
     {
@@ -28,11 +26,11 @@ where
     pub fn inner_filter_map<T>(
         &self,
         mut f: impl 'static + FnMut(&K, &V) -> Option<T>,
-    ) -> Anchor<Dict<K, T>, E>
+    ) -> Anchor<OrdMap<K, T>, E>
     where
         T: 'static + Clone + PartialEq,
     {
-        self.inner_unordered_fold(Dict::new(), move |out, diff_item| {
+        self.inner_unordered_fold(OrdMap::new(), move |out, diff_item| {
             match diff_item {
                 DiffItem::Add(k, v) => {
                     if let Some(new) = f(k, v) {
@@ -69,7 +67,7 @@ where
     where
         T: 'static + PartialEq + Clone,
     {
-        let mut last_observation = Dict::new();
+        let mut last_observation = OrdMap::new();
         self.map_mut(initial_state, move |out, this| {
             let mut did_update = false;
             for item in last_observation.diff(this) {
@@ -90,7 +88,7 @@ mod test {
     #[test]
     fn test_filter() {
         let mut engine = crate::singlethread::Engine::new();
-        let mut dict = Dict::new();
+        let mut dict = OrdMap::new();
         let a = crate::expert::Var::new(dict.clone());
         let b = a.watch().inner_filter(|_, n| *n > 10);
         let b_out = engine.get(&b);
@@ -120,7 +118,7 @@ mod test {
     #[test]
     fn test_map() {
         let mut engine = crate::singlethread::Engine::new();
-        let mut dict = Dict::new();
+        let mut dict = OrdMap::new();
         let a = crate::expert::Var::new(dict.clone());
         let b = a.watch().inner_map(|_, n| *n + 1);
         let b_out = engine.get(&b);
