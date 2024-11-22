@@ -1,4 +1,3 @@
-mod collect;
 pub mod ord_map;
 
 mod collect;
