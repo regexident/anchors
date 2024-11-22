@@ -1,9 +1,10 @@
+use std::panic::Location;
+
 use im::Vector;
 
 use crate::expert::{
     Anchor, AnchorHandle, AnchorInner, Engine, OutputContext, Poll, UpdateContext,
 };
-use std::panic::Location;
 
 impl<I: 'static + Clone, E: Engine> std::iter::FromIterator<Anchor<I, E>> for Anchor<Vector<I>, E> {
     fn from_iter<T>(iter: T) -> Self
@@ -85,9 +86,9 @@ impl<T: 'static + Clone, E: Engine> AnchorInner<E> for VectorCollect<T, E> {
 
 #[cfg(test)]
 mod test {
+    use im::{vector, Vector};
+
     use crate::singlethread::*;
-    use im::vector;
-    use im::Vector;
 
     #[test]
     fn collect() {

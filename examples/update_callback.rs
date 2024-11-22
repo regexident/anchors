@@ -1,6 +1,9 @@
-use anchors::expert::{MultiAnchor, Var};
-use anchors::singlethread::*;
 use std::cell::RefCell;
+
+use anchors::{
+    expert::{MultiAnchor, Var},
+    singlethread::*,
+};
 
 fn main() {
     let mut engine = Engine::new();

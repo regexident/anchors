@@ -1,11 +1,13 @@
-use super::{AnchorDebugInfo, Generation, GenericAnchor};
-use std::cell::{Cell, RefCell, RefMut};
-use std::rc::Rc;
+use std::{
+    cell::{Cell, RefCell, RefMut},
+    iter::Iterator,
+    marker::PhantomData,
+    rc::Rc,
+};
 
 use arena_graph::raw as ag;
 
-use std::iter::Iterator;
-use std::marker::PhantomData;
+use super::{AnchorDebugInfo, Generation, GenericAnchor};
 
 #[derive(PartialEq, Clone, Copy, Debug)]
 pub struct NodeGuard<'gg>(ag::NodeGuard<'gg, Node>);
