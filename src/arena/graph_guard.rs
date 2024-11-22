@@ -26,10 +26,7 @@ impl<'gg, N> GraphGuard<'gg, N> {
 
 impl<N> Clone for GraphGuard<'_, N> {
     fn clone(&self) -> Self {
-        Self {
-            graph: self.graph,
-            invariant: self.invariant,
-        }
+        *self
     }
 }
 
