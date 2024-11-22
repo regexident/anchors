@@ -95,7 +95,7 @@ pub trait Engine: 'static {
     type AnchorHandle: AnchorHandle;
     type DirtyHandle: DirtyHandle;
 
-    fn mount<I: AnchorInner<Self> + 'static>(inner: I) -> Anchor<I::Output, Self>;
+    fn mount<I: 'static + AnchorInner<Self>>(inner: I) -> Anchor<I::Output, Self>;
 }
 
 /// Allows a node with non-Anchors inputs to manually mark itself as dirty. Each engine implements its own.

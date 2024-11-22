@@ -70,7 +70,7 @@ impl crate::expert::Engine for Engine {
     type AnchorHandle = AnchorHandle;
     type DirtyHandle = DirtyHandle;
 
-    fn mount<I: AnchorInner<Self> + 'static>(inner: I) -> Anchor<I::Output> {
+    fn mount<I: 'static + AnchorInner<Self>>(inner: I) -> Anchor<I::Output> {
         DEFAULT_MOUNTER.with(|default_mounter| {
             let mut borrow1 = default_mounter.borrow_mut();
             let this = borrow1
@@ -476,7 +476,7 @@ trait GenericAnchor {
     fn debug_info(&self) -> AnchorDebugInfo;
 }
 
-impl<I: AnchorInner<Engine> + 'static> GenericAnchor for I {
+impl<I: 'static + AnchorInner<Engine>> GenericAnchor for I {
     fn dirty(&mut self, child: &NodeKey) {
         AnchorInner::dirty(self, child)
     }

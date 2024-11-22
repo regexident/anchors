@@ -249,7 +249,7 @@ macro_rules! impl_tuple_ext {
         impl <$($output_type,)+ E> Anchor<($($output_type,)+), E>
         where
             $(
-                $output_type: Clone + PartialEq + 'static,
+                $output_type: 'static + Clone + PartialEq,
             )+
             E: Engine,
         {
