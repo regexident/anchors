@@ -6,8 +6,6 @@
 
 use std::{fmt::Debug, hash::Hash, panic::Location};
 
-mod var;
-
 use crate::Anchor;
 
 mod constant;

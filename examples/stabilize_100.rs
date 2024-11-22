@@ -1,4 +1,7 @@
-use anchors::{core::Var, singlethread::Engine, Anchor};
+use anchors::{
+    singlethread::{Engine, Var},
+    Anchor,
+};
 
 const NODE_COUNT: u64 = 100;
 const ITER_COUNT: u64 = 500000;
@@ -19,7 +22,7 @@ fn main() {
 }
 
 #[inline(never)]
-fn iter(node: Anchor<u64, Engine>, mut engine: Engine, set_first_num: Var<u64, Engine>) {
+fn iter(node: Anchor<u64, Engine>, mut engine: Engine, set_first_num: Var<u64>) {
     let mut update_number = 0;
     for i in 0..ITER_COUNT {
         if i % (ITER_COUNT / 100) == 0 {

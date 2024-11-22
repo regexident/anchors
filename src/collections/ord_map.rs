@@ -87,10 +87,12 @@ mod test {
 
     #[test]
     fn test_filter() {
-        let mut engine = crate::singlethread::Engine::new();
+        use crate::singlethread::{Engine, Var};
+
+        let mut engine = Engine::new();
 
         let mut a_map = OrdMap::new();
-        let a = crate::core::Var::new(a_map.clone());
+        let a = Var::new(a_map.clone());
 
         let b = a.watch().inner_filter(|_, n| *n > 10);
         let b_map = engine.get(&b);
@@ -126,10 +128,12 @@ mod test {
 
     #[test]
     fn test_map() {
-        let mut engine = crate::singlethread::Engine::new();
+        use crate::singlethread::{Engine, Var};
+
+        let mut engine = Engine::new();
 
         let mut a_map = OrdMap::new();
-        let a = crate::core::Var::new(a_map.clone());
+        let a = Var::new(a_map.clone());
 
         let b = a.watch().inner_map(|_, n| *n + 1);
         let b_map = engine.get(&b);
