@@ -6,18 +6,19 @@
 
 use std::{fmt::Debug, hash::Hash, panic::Location};
 
-pub(crate) mod constant;
-
-mod ext;
 mod var;
 
 use crate::Anchor;
 
-pub use self::{
-    constant::Constant,
-    ext::{cutoff, map, map_mut, refmap, then, MultiAnchor},
-    var::Var,
-};
+mod constant;
+mod cutoff;
+mod map;
+mod map_mut;
+mod multi;
+mod refmap;
+mod then;
+
+pub use self::{constant::*, cutoff::*, map::*, map_mut::*, multi::*, refmap::*, then::*};
 
 /// Indicates whether a value is ready for reading, and if it is, whether it's changed
 /// since the last read.

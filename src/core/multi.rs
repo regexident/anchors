@@ -2,12 +2,6 @@ use std::panic::Location;
 
 use super::{Anchor, AnchorInner, Engine};
 
-pub mod cutoff;
-pub mod map;
-pub mod map_mut;
-pub mod refmap;
-pub mod then;
-
 /// A trait automatically implemented for tuples of Anchors.
 ///
 /// You'll likely want to `use` this trait in most of your programs, since it can create many
@@ -22,31 +16,31 @@ pub trait MultiAnchor<E: Engine>: Sized {
     where
         Out: 'static,
         F: 'static,
-        map::Map<Self::Target, F, Out>: AnchorInner<E, Output = Out>;
+        super::Map<Self::Target, F, Out>: AnchorInner<E, Output = Out>;
 
     fn map_mut<F, Out>(self, initial: Out, f: F) -> Anchor<Out, E>
     where
         Out: 'static,
         F: 'static,
-        map_mut::MapMut<Self::Target, F, Out>: AnchorInner<E, Output = Out>;
+        super::MapMut<Self::Target, F, Out>: AnchorInner<E, Output = Out>;
 
     fn then<F, Out>(self, f: F) -> Anchor<Out, E>
     where
         F: 'static,
         Out: 'static,
-        then::Then<Self::Target, Out, F, E>: AnchorInner<E, Output = Out>;
+        super::Then<Self::Target, Out, F, E>: AnchorInner<E, Output = Out>;
 
     fn cutoff<F, Out>(self, _f: F) -> Anchor<Out, E>
     where
         Out: 'static,
         F: 'static,
-        cutoff::Cutoff<Self::Target, F>: AnchorInner<E, Output = Out>;
+        super::Cutoff<Self::Target, F>: AnchorInner<E, Output = Out>;
 
     fn refmap<F, Out>(self, _f: F) -> Anchor<Out, E>
     where
         Out: 'static,
         F: 'static,
-        refmap::RefMap<Self::Target, F>: AnchorInner<E, Output = Out>;
+        super::RefMap<Self::Target, F>: AnchorInner<E, Output = Out>;
 }
 
 impl<O1, E> Anchor<O1, E>
@@ -78,9 +72,9 @@ where
     where
         Out: 'static,
         F: 'static,
-        map::Map<(Anchor<O1, E>,), F, Out>: AnchorInner<E, Output = Out>,
+        super::Map<(Anchor<O1, E>,), F, Out>: AnchorInner<E, Output = Out>,
     {
-        E::mount(map::Map {
+        E::mount(super::Map {
             anchors: (self.clone(),),
             f,
             output: None,
@@ -94,9 +88,9 @@ where
     where
         Out: 'static,
         F: 'static,
-        map_mut::MapMut<(Anchor<O1, E>,), F, Out>: AnchorInner<E, Output = Out>,
+        super::MapMut<(Anchor<O1, E>,), F, Out>: AnchorInner<E, Output = Out>,
     {
-        E::mount(map_mut::MapMut {
+        E::mount(super::MapMut {
             anchors: (self.clone(),),
             f,
             output: initial,
@@ -140,9 +134,9 @@ where
     where
         F: 'static,
         Out: 'static,
-        then::Then<(Anchor<O1, E>,), Out, F, E>: AnchorInner<E, Output = Out>,
+        super::Then<(Anchor<O1, E>,), Out, F, E>: AnchorInner<E, Output = Out>,
     {
-        E::mount(then::Then {
+        E::mount(super::Then {
             anchors: (self.clone(),),
             f,
             f_anchor: None,
@@ -183,9 +177,9 @@ where
     where
         Out: 'static,
         F: 'static,
-        refmap::RefMap<(Anchor<O1, E>,), F>: AnchorInner<E, Output = Out>,
+        super::RefMap<(Anchor<O1, E>,), F>: AnchorInner<E, Output = Out>,
     {
-        E::mount(refmap::RefMap {
+        E::mount(super::RefMap {
             anchors: (self.clone(),),
             f,
             location: Location::caller(),
@@ -234,9 +228,9 @@ where
     where
         Out: 'static,
         F: 'static,
-        cutoff::Cutoff<(Anchor<O1, E>,), F>: AnchorInner<E, Output = Out>,
+        super::Cutoff<(Anchor<O1, E>,), F>: AnchorInner<E, Output = Out>,
     {
-        E::mount(cutoff::Cutoff {
+        E::mount(super::Cutoff {
             anchors: (self.clone(),),
             f,
             location: Location::caller(),
@@ -274,9 +268,9 @@ macro_rules! impl_tuple_ext {
             where
                 Out: 'static,
                 F: 'static,
-                map::Map<Self::Target, F, Out>: AnchorInner<E, Output=Out>,
+                super::Map<Self::Target, F, Out>: AnchorInner<E, Output=Out>,
             {
-                E::mount(map::Map {
+                E::mount(super::Map {
                     anchors: ($(self.$num.clone(),)+),
                     f,
                     output: None,
@@ -290,9 +284,9 @@ macro_rules! impl_tuple_ext {
             where
                 Out: 'static,
                 F: 'static,
-                map_mut::MapMut<Self::Target, F, Out>: AnchorInner<E, Output=Out>,
+                super::MapMut<Self::Target, F, Out>: AnchorInner<E, Output=Out>,
             {
-                E::mount(map_mut::MapMut {
+                E::mount(super::MapMut {
                     anchors: ($(self.$num.clone(),)+),
                     f,
                     output: initial,
@@ -306,9 +300,9 @@ macro_rules! impl_tuple_ext {
             where
                 F: 'static,
                 Out: 'static,
-                then::Then<Self::Target, Out, F, E>: AnchorInner<E, Output=Out>,
+                super::Then<Self::Target, Out, F, E>: AnchorInner<E, Output=Out>,
             {
-                E::mount(then::Then {
+                E::mount(super::Then {
                     anchors: ($(self.$num.clone(),)+),
                     f,
                     f_anchor: None,
@@ -322,9 +316,9 @@ macro_rules! impl_tuple_ext {
             where
                 Out: 'static,
                 F: 'static,
-                refmap::RefMap<Self::Target, F>: AnchorInner<E, Output = Out>,
+                super::RefMap<Self::Target, F>: AnchorInner<E, Output = Out>,
             {
-                E::mount(refmap::RefMap {
+                E::mount(super::RefMap {
                     anchors: ($(self.$num.clone(),)+),
                     f,
                     location: Location::caller(),
@@ -336,9 +330,9 @@ macro_rules! impl_tuple_ext {
             where
                 Out: 'static,
                 F: 'static,
-                cutoff::Cutoff<Self::Target, F>: AnchorInner<E, Output = Out>,
+                super::Cutoff<Self::Target, F>: AnchorInner<E, Output = Out>,
             {
-                E::mount(cutoff::Cutoff {
+                E::mount(super::Cutoff {
                     anchors: ($(self.$num.clone(),)+),
                     f,
                     location: Location::caller(),
