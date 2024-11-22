@@ -11,7 +11,7 @@ use super::{
 };
 
 #[derive(Copy, Clone, Default, Eq, PartialEq, Hash, Debug)]
-pub enum RecalcState {
+pub(super) enum RecalcState {
     #[default]
     Needed,
     Pending,
@@ -19,7 +19,7 @@ pub enum RecalcState {
 }
 
 thread_local! {
-    pub static NEXT_TOKEN: Cell<u32> = const { Cell::new(0) };
+    static NEXT_TOKEN: Cell<u32> = const { Cell::new(0) };
 }
 
 pub struct Graph {
@@ -64,7 +64,7 @@ impl Graph {
     }
 
     #[cfg(test)]
-    pub fn insert_testing(&self) -> AnchorHandle {
+    pub(super) fn insert_testing(&self) -> AnchorHandle {
         self.insert(
             Box::new(crate::expert::constant::Constant::new_raw_testing(123)),
             AnchorDebugInfo {
@@ -139,7 +139,8 @@ impl Drop for Graph {
     }
 }
 
-pub fn ensure_height_increases<'a>(
+#[allow(clippy::result_unit_err)] // FIXME
+pub(super) fn ensure_height_increases<'a>(
     child: NodeGuard<'a>,
     parent: NodeGuard<'a>,
 ) -> Result<bool, ()> {
@@ -153,7 +154,7 @@ pub fn ensure_height_increases<'a>(
 }
 
 #[allow(clippy::result_unit_err)] // FIXME
-fn set_min_height(node: NodeGuard<'_>, min_height: usize) -> Result<(), ()> {
+pub(super) fn set_min_height(node: NodeGuard<'_>, min_height: usize) -> Result<(), ()> {
     if node.visited.get() {
         return Err(());
     }
@@ -233,11 +234,11 @@ fn dequeue_calc(graph: &Graph, node: NodeGuard<'_>) {
     node.ptrs.next.set(None);
 }
 
-pub fn height(node: NodeGuard<'_>) -> usize {
+pub(super) fn height(node: NodeGuard<'_>) -> usize {
     node.ptrs.height.get()
 }
 
-pub fn needs_recalc(node: NodeGuard<'_>) {
+pub(super) fn needs_recalc(node: NodeGuard<'_>) {
     if node.ptrs.recalc_state.get() != RecalcState::Ready {
         // already in recalc queue, or already pending recalc
         return;
@@ -246,7 +247,7 @@ pub fn needs_recalc(node: NodeGuard<'_>) {
     node.ptrs.recalc_state.set(RecalcState::Needed);
 }
 
-pub fn recalc_state(node: NodeGuard<'_>) -> RecalcState {
+pub(super) fn recalc_state(node: NodeGuard<'_>) -> RecalcState {
     node.ptrs.recalc_state.get()
 }
 

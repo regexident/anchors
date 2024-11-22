@@ -20,11 +20,11 @@ impl<'a> PartialEq for NodeGuard<'a> {
 }
 
 impl<'a> NodeGuard<'a> {
-    pub fn key(self) -> NodeKey {
+    pub(crate) fn key(self) -> NodeKey {
         NodeKey::new(unsafe { self.0.make_ptr() }, self.token)
     }
 
-    pub fn add_clean_parent(self, parent: NodeGuard<'a>) {
+    pub(crate) fn add_clean_parent(self, parent: NodeGuard<'a>) {
         if self.ptrs.clean_parent0.get().is_none() {
             self.ptrs
                 .clean_parent0
@@ -37,7 +37,7 @@ impl<'a> NodeGuard<'a> {
         }
     }
 
-    pub fn clean_parents(self) -> impl Iterator<Item = NodeGuard<'a>> {
+    pub(crate) fn clean_parents(self) -> impl Iterator<Item = NodeGuard<'a>> {
         RefCellVecIterator::new(
             self.0.node().ptrs.clean_parents.borrow_mut(),
             0,
@@ -46,7 +46,7 @@ impl<'a> NodeGuard<'a> {
         )
     }
 
-    pub fn drain_clean_parents(self) -> impl Iterator<Item = NodeGuard<'a>> {
+    pub(crate) fn drain_clean_parents(self) -> impl Iterator<Item = NodeGuard<'a>> {
         RefCellVecIterator::new(
             self.0.node().ptrs.clean_parents.borrow_mut(),
             0,
@@ -55,7 +55,7 @@ impl<'a> NodeGuard<'a> {
         )
     }
 
-    pub fn add_necessary_child(self, child: NodeGuard<'a>) {
+    pub(crate) fn add_necessary_child(self, child: NodeGuard<'a>) {
         let mut necessary_children = self.ptrs.necessary_children.borrow_mut();
         let child_ptr = unsafe { child.0.make_ptr() };
         if let Err(i) = necessary_children.binary_search(&child_ptr) {
@@ -64,7 +64,7 @@ impl<'a> NodeGuard<'a> {
         }
     }
 
-    pub fn remove_necessary_child(self, child: NodeGuard<'a>) {
+    pub(crate) fn remove_necessary_child(self, child: NodeGuard<'a>) {
         let mut necessary_children = self.ptrs.necessary_children.borrow_mut();
         let child_ptr = unsafe { child.0.make_ptr() };
         if let Ok(i) = necessary_children.binary_search(&child_ptr) {
@@ -73,7 +73,8 @@ impl<'a> NodeGuard<'a> {
         }
     }
 
-    pub fn necessary_children(self) -> impl Iterator<Item = NodeGuard<'a>> {
+    #[allow(dead_code)]
+    pub(crate) fn necessary_children(self) -> impl Iterator<Item = NodeGuard<'a>> {
         RefCellVecIterator::new(
             self.0.node().ptrs.necessary_children.borrow_mut(),
             0,
@@ -82,7 +83,7 @@ impl<'a> NodeGuard<'a> {
         )
     }
 
-    pub fn drain_necessary_children(self) -> impl Iterator<Item = NodeGuard<'a>> {
+    pub(crate) fn drain_necessary_children(self) -> impl Iterator<Item = NodeGuard<'a>> {
         let necessary_children = self.0.node().ptrs.necessary_children.borrow_mut();
         for child in &*necessary_children {
             let count = &unsafe { self.0.lookup_ptr(*child) }.necessary_count;
