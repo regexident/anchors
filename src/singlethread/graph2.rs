@@ -78,10 +78,9 @@ pub struct Node {
 pub struct NodeKey {
     ptr: NodePtr,
     token: u32,
+    // Make type !Send + !Sync:
+    _phantom: PhantomData<Rc<()>>,
 }
-
-impl !Send for NodeKey {}
-impl !Sync for NodeKey {}
 
 pub struct NodePtrs {
     /// first parent, remaining parents. unsorted, duplicates may exist
@@ -158,6 +157,7 @@ impl<'a> NodeGuard<'a> {
         NodeKey {
             ptr: unsafe { self.0.make_ptr() },
             token: self.token,
+            _phantom: PhantomData,
         }
     }
 
@@ -438,6 +438,7 @@ impl Graph2 {
             let num = NodeKey {
                 ptr: unsafe { ptr.make_ptr() },
                 token: self.graph_token,
+                _phantom: PhantomData,
             };
             AnchorHandle {
                 num,
