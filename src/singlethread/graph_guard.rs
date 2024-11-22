@@ -9,11 +9,11 @@ pub struct GraphGuard<'gg> {
 }
 
 impl<'gg> GraphGuard<'gg> {
-    pub fn new(nodes: arena::GraphGuard<'gg, Node>, graph: &'gg Graph) -> Self {
+    pub(super) fn new(nodes: arena::GraphGuard<'gg, Node>, graph: &'gg Graph) -> Self {
         Self { nodes, graph }
     }
 
-    pub fn get(&self, key: NodeKey) -> Option<NodeGuard<'gg>> {
+    pub(super) fn get(&self, key: NodeKey) -> Option<NodeGuard<'gg>> {
         if !self.graph.accepts_key(key) {
             return None;
         }
@@ -22,14 +22,14 @@ impl<'gg> GraphGuard<'gg> {
     }
 
     #[cfg(test)]
-    pub fn insert_testing_guard(&self) -> NodeGuard<'gg> {
+    pub(super) fn insert_testing_guard(&self) -> NodeGuard<'gg> {
         let handle = self.graph.insert_testing();
         let guard = self.get(handle.key()).unwrap();
         std::mem::forget(handle);
         guard
     }
 
-    pub fn recalc_pop_next(&self) -> Option<(usize, NodeGuard<'gg>)> {
+    pub(super) fn recalc_pop_next(&self) -> Option<(usize, NodeGuard<'gg>)> {
         let mut recalc_queues = self.graph.recalc_queues.borrow_mut();
         while self.graph.recalc_min_height.get() <= self.graph.recalc_max_height.get() {
             if let Some(ptr) = recalc_queues[self.graph.recalc_min_height.get()] {
@@ -55,7 +55,7 @@ impl<'gg> GraphGuard<'gg> {
         None
     }
 
-    pub fn queue_recalc(&self, node: NodeGuard<'gg>) {
+    pub(super) fn queue_recalc(&self, node: NodeGuard<'gg>) {
         if node.ptrs.recalc_state.get() == RecalcState::Pending {
             // already in recalc queue
             return;

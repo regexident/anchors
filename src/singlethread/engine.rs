@@ -263,7 +263,7 @@ impl Engine {
     }
 
     /// Returns whether an Anchor is Observed, Necessary, or Unnecessary.
-    pub fn check_observed_raw(node: NodeGuard<'_>) -> ObservedState {
+    pub(super) fn check_observed_raw(node: NodeGuard<'_>) -> ObservedState {
         if node.observed.get() {
             return ObservedState::Observed;
         }

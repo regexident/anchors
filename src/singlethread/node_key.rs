@@ -11,7 +11,7 @@ pub struct NodeKey {
 }
 
 impl NodeKey {
-    pub fn new(ptr: NodePtr, token: u32) -> Self {
+    pub(super) fn new(ptr: NodePtr, token: u32) -> Self {
         Self {
             ptr,
             token,
