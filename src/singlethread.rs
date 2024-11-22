@@ -1,10 +1,11 @@
-//! Singlethread is Anchors' default execution engine. It's a single threaded engine capable of both
-//! Adapton-style pull updates and — if `mark_observed` and `mark_unobserved` are used,
-//! Incremental-style push updates.
+//! Anchors' default execution engine.
 //!
-//! As of Semptember 2020, execution overhead per-node sits at around 100ns on this author's Macbook
-//! Air, likely somewhat more if single node has a significant number of parents or children. Hopefully
-//! this will significantly improve over the coming months.
+//! It's a single threaded engine capable of both Adapton-style pull updates
+//! and — if `mark_observed` and `mark_unobserved` are used, Incremental-style push updates.
+//!
+//! As of September 2020, execution overhead per-node sits at around 100ns on this author's MacBook Air,
+//! likely somewhat more if single node has a significant number of parents or children.
+//! Hopefully this will significantly improve over the coming months.
 
 mod generation;
 mod graph2;
@@ -17,7 +18,7 @@ use graph2::{Graph2, Graph2Guard, NodeGuard, NodeKey, RecalcState};
 pub use graph2::AnchorHandle;
 pub use graph2::NodeKey as AnchorToken;
 
-/// The main struct of the Anchors library. Represents a single value on the singlthread recomputation graph.
+/// The main struct of the Anchors library. Represents a single value on the `singlethread` recomputation graph.
 ///
 /// You should basically never need to create these with `Anchor::new_from_expert`; instead call functions like `Var::new` and `MultiAnchor::map`
 /// to create them.
@@ -54,11 +55,11 @@ pub enum ObservedState {
     /// The node is not marked as observed directly.
     /// Additionally, this node either has no Observed descendent, or the chain linking
     /// this node to that Observed descendent has not been recalculated since that
-    /// dencendent become observed.
+    /// descendent become observed.
     Unnecessary,
 }
 
-/// The main execution engine of Singlethread.
+/// The main execution engine of Single-thread.
 pub struct Engine {
     // TODO store Nodes on heap directly?? maybe try for Rc<RefCell<SlotMap>> now
     graph: Rc<Graph2>,
@@ -156,7 +157,7 @@ impl Engine {
             if graph2::recalc_state(anchor_node) != RecalcState::Ready {
                 graph.queue_recalc(anchor_node);
                 // stabilize again, to make sure our target node that is now in the queue is up-to-date
-                // use stabilize0 because no dirty marks have occured since last stabilization, and we want
+                // use stabilize0 because no dirty marks have occurred since last stabilization, and we want
                 // to make sure we don't unnecessarily increment generation number
                 self.stabilize0();
             }
@@ -339,7 +340,7 @@ fn mark_dirty0<'a>(graph: Graph2Guard<'a>, next: NodeGuard<'a>) {
     }
 }
 
-/// Singlethread's implementation of Anchors' `DirtyHandle`, which allows a node with non-Anchors inputs to manually mark itself as dirty.
+/// Single-threaded implementation of Anchors' `DirtyHandle`, which allows a node with non-Anchors inputs to manually mark itself as dirty.
 #[derive(Debug, Clone)]
 pub struct DirtyHandle {
     num: NodeKey,
