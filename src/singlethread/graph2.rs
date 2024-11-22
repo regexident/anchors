@@ -578,53 +578,54 @@ mod test {
         graph.with(|guard| {
             let a = guard.insert_testing_guard();
             let b = guard.insert_testing_guard();
-            let empty: Vec<NodeGuard<'_>> = vec![];
 
-            assert_eq!(empty, to_vec(a.necessary_children()));
-            assert_eq!(empty, to_vec(a.clean_parents()));
-            assert_eq!(empty, to_vec(b.necessary_children()));
-            assert_eq!(empty, to_vec(b.clean_parents()));
-            assert_eq!(false, a.necessary_count.get() > 0);
-            assert_eq!(false, b.necessary_count.get() > 0);
+            assert_eq!(to_vec(a.necessary_children()), vec![]);
+            assert_eq!(to_vec(a.clean_parents()), vec![]);
+            assert_eq!(to_vec(b.necessary_children()), vec![]);
+            assert_eq!(to_vec(b.clean_parents()), vec![]);
+            assert_eq!(a.necessary_count.get(), 0);
+            assert_eq!(b.necessary_count.get(), 0);
 
-            assert_eq!(Ok(false), ensure_height_increases(a, b));
-            assert_eq!(Ok(true), ensure_height_increases(a, b));
+            assert!(!ensure_height_increases(a, b).unwrap());
+            assert!(ensure_height_increases(a, b).unwrap());
+
             a.add_clean_parent(b);
 
-            assert_eq!(empty, to_vec(a.necessary_children()));
-            assert_eq!(vec![b], to_vec(a.clean_parents()));
-            assert_eq!(empty, to_vec(b.necessary_children()));
-            assert_eq!(empty, to_vec(b.clean_parents()));
-            assert_eq!(false, a.necessary_count.get() > 0);
-            assert_eq!(false, b.necessary_count.get() > 0);
+            assert_eq!(to_vec(a.necessary_children()), vec![]);
+            assert_eq!(to_vec(a.clean_parents()), vec![b]);
+            assert_eq!(to_vec(b.necessary_children()), vec![]);
+            assert_eq!(to_vec(b.clean_parents()), vec![]);
+            assert_eq!(a.necessary_count.get(), 0);
+            assert_eq!(b.necessary_count.get(), 0);
 
-            assert_eq!(Ok(true), ensure_height_increases(a, b));
+            assert!(ensure_height_increases(a, b).unwrap());
+
             b.add_necessary_child(a);
 
-            assert_eq!(empty, to_vec(a.necessary_children()));
-            assert_eq!(vec![b], to_vec(a.clean_parents()));
-            assert_eq!(vec![a], to_vec(b.necessary_children()));
-            assert_eq!(empty, to_vec(b.clean_parents()));
-            assert_eq!(true, a.necessary_count.get() > 0);
-            assert_eq!(false, b.necessary_count.get() > 0);
+            assert_eq!(to_vec(a.necessary_children()), vec![]);
+            assert_eq!(to_vec(a.clean_parents()), vec![b]);
+            assert_eq!(to_vec(b.necessary_children()), vec![a]);
+            assert_eq!(to_vec(b.clean_parents()), vec![]);
+            assert_ne!(a.necessary_count.get(), 0);
+            assert_eq!(b.necessary_count.get(), 0);
 
             let _ = a.drain_clean_parents();
 
-            assert_eq!(empty, to_vec(a.necessary_children()));
-            assert_eq!(empty, to_vec(a.clean_parents()));
-            assert_eq!(vec![a], to_vec(b.necessary_children()));
-            assert_eq!(empty, to_vec(b.clean_parents()));
-            assert_eq!(true, a.necessary_count.get() > 0);
-            assert_eq!(false, b.necessary_count.get() > 0);
+            assert_eq!(to_vec(a.necessary_children()), vec![]);
+            assert_eq!(to_vec(a.clean_parents()), vec![]);
+            assert_eq!(to_vec(b.necessary_children()), vec![a]);
+            assert_eq!(to_vec(b.clean_parents()), vec![]);
+            assert_ne!(a.necessary_count.get(), 0);
+            assert_eq!(b.necessary_count.get(), 0);
 
             let _ = b.drain_necessary_children();
 
-            assert_eq!(empty, to_vec(a.necessary_children()));
-            assert_eq!(empty, to_vec(a.clean_parents()));
-            assert_eq!(empty, to_vec(b.necessary_children()));
-            assert_eq!(empty, to_vec(b.clean_parents()));
-            assert_eq!(false, a.necessary_count.get() > 0);
-            assert_eq!(false, b.necessary_count.get() > 0);
+            assert_eq!(to_vec(a.necessary_children()), vec![]);
+            assert_eq!(to_vec(a.clean_parents()), vec![]);
+            assert_eq!(to_vec(b.necessary_children()), vec![]);
+            assert_eq!(to_vec(b.clean_parents()), vec![]);
+            assert_eq!(a.necessary_count.get(), 0);
+            assert_eq!(b.necessary_count.get(), 0);
         });
     }
 
@@ -637,31 +638,33 @@ mod test {
             let b = guard.insert_testing_guard();
             let c = guard.insert_testing_guard();
 
-            assert_eq!(0, height(a));
-            assert_eq!(0, height(b));
-            assert_eq!(0, height(c));
+            assert_eq!(height(a), 0);
+            assert_eq!(height(b), 0);
+            assert_eq!(height(c), 0);
 
-            assert_eq!(Ok(false), ensure_height_increases(b, c));
-            assert_eq!(Ok(true), ensure_height_increases(b, c));
+            assert!(!ensure_height_increases(b, c).unwrap());
+            assert!(ensure_height_increases(b, c).unwrap());
+
             b.add_clean_parent(c);
 
-            assert_eq!(0, height(a));
-            assert_eq!(0, height(b));
-            assert_eq!(1, height(c));
+            assert_eq!(height(a), 0);
+            assert_eq!(height(b), 0);
+            assert_eq!(height(c), 1);
 
-            assert_eq!(Ok(false), ensure_height_increases(a, b));
-            assert_eq!(Ok(true), ensure_height_increases(a, b));
+            assert!(!ensure_height_increases(a, b).unwrap());
+            assert!(ensure_height_increases(a, b).unwrap());
+
             a.add_clean_parent(b);
 
-            assert_eq!(0, height(a));
-            assert_eq!(1, height(b));
-            assert_eq!(2, height(c));
+            assert_eq!(height(a), 0);
+            assert_eq!(height(b), 1);
+            assert_eq!(height(c), 2);
 
             let _ = a.drain_clean_parents();
 
-            assert_eq!(0, height(a));
-            assert_eq!(1, height(b));
-            assert_eq!(2, height(c));
+            assert_eq!(height(a), 0);
+            assert_eq!(height(b), 1);
+            assert_eq!(height(c), 2);
         })
     }
 
@@ -729,20 +732,20 @@ mod test {
             guard.queue_recalc(c);
             guard.queue_recalc(d);
 
-            assert_eq!(Some(a), guard.recalc_pop_next().map(|(_, v)| v));
-            assert_eq!(Some(c), guard.recalc_pop_next().map(|(_, v)| v));
-            assert_eq!(Some(d), guard.recalc_pop_next().map(|(_, v)| v));
+            assert_eq!(guard.recalc_pop_next().map(|(_, v)| v).unwrap(), a);
+            assert_eq!(guard.recalc_pop_next().map(|(_, v)| v).unwrap(), c);
+            assert_eq!(guard.recalc_pop_next().map(|(_, v)| v).unwrap(), d);
 
             guard.queue_recalc(e);
             guard.queue_recalc(e2);
             guard.queue_recalc(e3);
 
-            assert_eq!(Some(e3), guard.recalc_pop_next().map(|(_, v)| v));
-            assert_eq!(Some(e2), guard.recalc_pop_next().map(|(_, v)| v));
-            assert_eq!(Some(e), guard.recalc_pop_next().map(|(_, v)| v));
-            assert_eq!(Some(b), guard.recalc_pop_next().map(|(_, v)| v));
+            assert_eq!(guard.recalc_pop_next().map(|(_, v)| v).unwrap(), e3);
+            assert_eq!(guard.recalc_pop_next().map(|(_, v)| v).unwrap(), e2);
+            assert_eq!(guard.recalc_pop_next().map(|(_, v)| v).unwrap(), e);
+            assert_eq!(guard.recalc_pop_next().map(|(_, v)| v).unwrap(), b);
 
-            assert_eq!(None, guard.recalc_pop_next().map(|(_, v)| v));
+            assert!(guard.recalc_pop_next().map(|(_, v)| v).is_none());
         })
     }
 
@@ -781,9 +784,10 @@ mod test {
         let a = graph.insert_testing();
         let d = graph.insert_testing();
 
-        assert_eq!(a_token, a.token());
-        assert_eq!(b_token, b.token());
-        assert_eq!(c_token, c.token());
+        assert_eq!(a.token(), a_token);
+        assert_eq!(b.token(), b_token);
+        assert_eq!(c.token(), c_token);
+
         let d_token = d.token();
 
         std::mem::drop(c);
@@ -796,9 +800,9 @@ mod test {
         let a = graph.insert_testing();
         let c = graph.insert_testing();
 
-        assert_eq!(a_token, a.token());
-        assert_eq!(b_token, b.token());
-        assert_eq!(c_token, c.token());
-        assert_eq!(d_token, d.token());
+        assert_eq!(a.token(), a_token);
+        assert_eq!(b.token(), b_token);
+        assert_eq!(c.token(), c_token);
+        assert_eq!(d.token(), d_token);
     }
 }
