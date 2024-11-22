@@ -1,7 +1,7 @@
 use std::num::NonZeroU64;
 
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
-pub struct Generation(NonZeroU64);
+pub(super) struct Generation(NonZeroU64);
 
 impl Generation {
     pub fn new() -> Generation {
