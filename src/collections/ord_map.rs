@@ -67,10 +67,10 @@ impl<E: Engine, K: Ord + Clone + PartialEq + 'static, V: Clone + PartialEq + 'st
         mut f: F,
     ) -> Anchor<T, E> {
         let mut last_observation = Dict::new();
-        self.map_mut(initial_state, move |mut out, this| {
+        self.map_mut(initial_state, move |out, this| {
             let mut did_update = false;
             for item in last_observation.diff(this) {
-                if f(&mut out, item) {
+                if f(out, item) {
                     did_update = true;
                 }
             }

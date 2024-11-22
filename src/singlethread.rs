@@ -31,7 +31,7 @@ pub type Anchor<T> = crate::expert::Anchor<T, Engine>;
 pub type Var<T> = crate::expert::Var<T, Engine>;
 
 thread_local! {
-    static DEFAULT_MOUNTER: RefCell<Option<Mounter>> = RefCell::new(None);
+    static DEFAULT_MOUNTER: RefCell<Option<Mounter>> = const { RefCell::new(None) };
 }
 
 /// Indicates whether the node is a part of some observed calculation.
@@ -83,6 +83,12 @@ impl crate::expert::Engine for Engine {
     }
 }
 
+impl Default for Engine {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Engine {
     /// Creates a new Engine with maximum height 256.
     pub fn new() -> Self {
@@ -128,7 +134,7 @@ impl Engine {
         })
     }
 
-    fn update_necessary_children<'a>(node: NodeGuard<'a>) {
+    fn update_necessary_children(node: NodeGuard<'_>) {
         if Self::check_observed_raw(node) != ObservedState::Unnecessary {
             // we have another parent still observed, so skip this
             return;
@@ -141,7 +147,7 @@ impl Engine {
 
     /// Retrieves the value of an Anchor, recalculating dependencies as necessary to get the
     /// latest value.
-    pub fn get<'out, O: Clone + 'static>(&mut self, anchor: &Anchor<O>) -> O {
+    pub fn get<O: 'static + Clone>(&mut self, anchor: &Anchor<O>) -> O {
         // stabilize once before, since the stabilization process may mark our requested node
         // as dirty
         self.stabilize();
@@ -159,7 +165,7 @@ impl Engine {
             borrow
                 .as_ref()
                 .unwrap()
-                .output(&mut EngineContext { engine: &self })
+                .output(&mut EngineContext { engine: self })
                 .downcast_ref::<O>()
                 .unwrap()
                 .clone()
@@ -168,7 +174,7 @@ impl Engine {
 
     pub(crate) fn update_dirty_marks(&mut self) {
         self.graph.with(|graph| {
-            let dirty_marks = std::mem::replace(&mut *self.dirty_marks.borrow_mut(), Vec::new());
+            let dirty_marks = std::mem::take(&mut *self.dirty_marks.borrow_mut());
             for dirty in dirty_marks {
                 let node = graph.get(dirty).unwrap();
                 mark_dirty(graph, node, false);
@@ -208,7 +214,7 @@ impl Engine {
     fn recalculate<'a>(&self, graph: Graph2Guard<'a>, node: NodeGuard<'a>) -> bool {
         let this_anchor = &node.anchor;
         let mut ecx = EngineContextMut {
-            engine: &self,
+            engine: self,
             node,
             graph,
             pending_on_anchor_get: false,
@@ -274,6 +280,7 @@ impl Engine {
         //         state
         //     );
         // }
+        #[allow(clippy::let_and_return)]
         debug
     }
 
@@ -285,10 +292,11 @@ impl Engine {
     }
 
     /// Returns whether an Anchor is Observed, Necessary, or Unnecessary.
-    pub fn check_observed_raw<'a>(node: NodeGuard<'a>) -> ObservedState {
+    pub fn check_observed_raw(node: NodeGuard<'_>) -> ObservedState {
         if node.observed.get() {
             return ObservedState::Observed;
         }
+
         if node.necessary_count.get() > 0 {
             ObservedState::Necessary
         } else {
@@ -459,7 +467,7 @@ impl<'eng, 'gg> UpdateContext for EngineContextMut<'eng, 'gg> {
 trait GenericAnchor {
     fn dirty(&mut self, child: &NodeKey);
 
-    fn poll_updated<'eng, 'gg>(&mut self, ctx: &mut EngineContextMut<'eng, 'gg>) -> Poll;
+    fn poll_updated(&mut self, ctx: &mut EngineContextMut<'_, '_>) -> Poll;
 
     fn output<'slf, 'out>(&'slf self, ctx: &mut EngineContext<'out>) -> &'out dyn Any
     where
@@ -473,7 +481,7 @@ impl<I: AnchorInner<Engine> + 'static> GenericAnchor for I {
         AnchorInner::dirty(self, child)
     }
 
-    fn poll_updated<'eng, 'gg>(&mut self, ctx: &mut EngineContextMut<'eng, 'gg>) -> Poll {
+    fn poll_updated(&mut self, ctx: &mut EngineContextMut<'_, '_>) -> Poll {
         AnchorInner::poll_updated(self, ctx)
     }
 
@@ -498,11 +506,11 @@ struct AnchorDebugInfo {
     type_info: &'static str,
 }
 
-impl AnchorDebugInfo {
-    fn _to_string(&self) -> String {
+impl std::fmt::Display for AnchorDebugInfo {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self.location {
-            Some((name, location)) => format!("{} ({})", location, name),
-            None => format!("{}", self.type_info),
+            Some((name, location)) => write!(f, "{location} ({name})"),
+            None => write!(f, "{}", self.type_info),
         }
     }
 }

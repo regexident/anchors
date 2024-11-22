@@ -9,7 +9,7 @@ impl<I: 'static + Clone, E: Engine> std::iter::FromIterator<Anchor<I, E>> for An
     where
         T: IntoIterator<Item = Anchor<I, E>>,
     {
-        VecCollect::new(iter.into_iter().collect())
+        VecCollect::new_anchor(iter.into_iter().collect())
     }
 }
 
@@ -20,7 +20,7 @@ impl<'a, I: 'static + Clone, E: Engine> std::iter::FromIterator<&'a Anchor<I, E>
     where
         T: IntoIterator<Item = &'a Anchor<I, E>>,
     {
-        VecCollect::new(iter.into_iter().cloned().collect())
+        VecCollect::new_anchor(iter.into_iter().cloned().collect())
     }
 }
 
@@ -32,7 +32,7 @@ struct VecCollect<T, E: Engine> {
 
 impl<T: 'static + Clone, E: Engine> VecCollect<T, E> {
     #[track_caller]
-    pub fn new(anchors: Vec<Anchor<T, E>>) -> Anchor<Vec<T>, E> {
+    pub fn new_anchor(anchors: Vec<Anchor<T, E>>) -> Anchor<Vec<T>, E> {
         E::mount(Self {
             anchors,
             vals: None,
@@ -74,7 +74,7 @@ impl<T: 'static + Clone, E: Engine> AnchorInner<E> for VecCollect<T, E> {
     where
         'slf: 'out,
     {
-        &self.vals.as_ref().unwrap()
+        self.vals.as_ref().unwrap()
     }
 
     fn debug_location(&self) -> Option<(&'static str, &'static Location<'static>)> {
