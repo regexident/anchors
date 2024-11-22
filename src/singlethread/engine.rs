@@ -27,7 +27,10 @@ impl crate::core::Engine for Engine {
     type AnchorHandle = AnchorHandle;
     type DirtyHandle = DirtyHandle;
 
-    fn mount<I: 'static + AnchorInner<Self>>(inner: I) -> Anchor<I::Output> {
+    fn mount<I>(inner: I) -> Anchor<I::Output>
+    where
+        I: 'static + AnchorInner<Self>,
+    {
         DEFAULT_MOUNTER.with(|default_mounter| {
             let mut borrow1 = default_mounter.borrow_mut();
             let this = borrow1
