@@ -10,19 +10,6 @@ pub struct Variable<T> {
     anchor: Anchor<T>,
 }
 
-/// An Anchor type for values that are mutated by calling a setter function from outside of the Anchors recomputation graph.
-struct VarAnchor<T> {
-    inner: Rc<RefCell<VarShared<T>>>,
-    val: Rc<T>,
-}
-
-#[derive(Clone)]
-struct VarShared<T> {
-    dirty_handle: Option<DirtyHandle>,
-    val: Rc<T>,
-    value_changed: bool,
-}
-
 impl<T> Clone for Variable<T> {
     fn clone(&self) -> Self {
         Self {
@@ -36,25 +23,25 @@ impl<T> Variable<T>
 where
     T: 'static,
 {
-    /// Creates a new Var
-    pub fn new(val: T) -> Variable<T> {
-        let val = Rc::new(val);
+    /// Creates a new variable
+    pub fn new(value: T) -> Variable<T> {
+        let value = Rc::new(value);
         let inner = Rc::new(RefCell::new(VarShared {
             dirty_handle: None,
-            val: val.clone(),
+            value: value.clone(),
             value_changed: true,
         }));
         Variable {
             inner: inner.clone(),
-            anchor: Engine::mount(VarAnchor { inner, val }),
+            anchor: Engine::mount(VarAnchor { inner, value }),
         }
     }
 
     /// Updates the value inside the VarAnchor, and indicates to the recomputation graph that
     /// the value has changed.
-    pub fn set(&self, val: T) {
+    pub fn set(&self, value: T) {
         let mut inner = self.inner.borrow_mut();
-        inner.val = Rc::new(val);
+        inner.value = Rc::new(value);
         if let Some(waker) = &inner.dirty_handle {
             waker.mark_dirty();
         }
@@ -63,12 +50,25 @@ where
 
     /// Retrieves the last value set
     pub fn get(&self) -> Rc<T> {
-        self.inner.borrow().val.clone()
+        self.inner.borrow().value.clone()
     }
 
     pub fn watch(&self) -> Anchor<T> {
         self.anchor.clone()
     }
+}
+
+#[derive(Clone)]
+struct VarShared<T> {
+    dirty_handle: Option<DirtyHandle>,
+    value: Rc<T>,
+    value_changed: bool,
+}
+
+/// An Anchor type for values that are mutated by calling a setter function from outside of the Anchors recomputation graph.
+struct VarAnchor<T> {
+    inner: Rc<RefCell<VarShared<T>>>,
+    value: Rc<T>,
 }
 
 impl<T> AnchorCore<Engine> for VarAnchor<T>
@@ -78,7 +78,7 @@ where
     type Output = T;
 
     fn mark_dirty(&mut self, _edge: <AnchorHandle as crate::core::AnchorHandle>::AnchorKey) {
-        panic!("somehow an input was dirtied on VarAnchor; it never has any inputs to dirty")
+        panic!("attempt to mark a variable's non-existent inputs as as dirty")
     }
 
     fn poll_updated(&mut self, ctx: &mut impl UpdateContext<Engine = Engine>) -> Poll {
@@ -88,7 +88,7 @@ where
             inner.dirty_handle = Some(ctx.dirty_handle());
         }
         let res = if inner.value_changed {
-            self.val = inner.val.clone();
+            self.value = inner.value.clone();
             Poll::Updated
         } else {
             Poll::Unchanged
@@ -104,6 +104,6 @@ where
     where
         'slf: 'out,
     {
-        &self.val
+        &self.value
     }
 }
