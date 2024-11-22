@@ -26,7 +26,7 @@ macro_rules! impl_tuple_map {
         {
             type Output = Out;
 
-            fn dirty(&mut self, _edge:  &<E::AnchorHandle as AnchorHandle>::Token) {
+            fn mark_dirty(&mut self, _edge:  &<E::AnchorHandle as AnchorHandle>::Token) {
                 self.output_stale = true;
             }
 

@@ -17,7 +17,7 @@ where
 {
     type Output = Out;
 
-    fn dirty(&mut self, _edge: &<E::AnchorHandle as crate::expert::AnchorHandle>::Token) {
+    fn mark_dirty(&mut self, _edge: &<E::AnchorHandle as crate::expert::AnchorHandle>::Token) {
         // noop
     }
 

@@ -82,7 +82,7 @@ where
 {
     type Output = T;
 
-    fn dirty(&mut self, _edge: &<E::AnchorHandle as AnchorHandle>::Token) {
+    fn mark_dirty(&mut self, _edge: &<E::AnchorHandle as AnchorHandle>::Token) {
         panic!("somehow an input was dirtied on VarAnchor; it never has any inputs to dirty")
     }
 

@@ -79,7 +79,7 @@ fn mark_dirty<'a>(graph: GraphGuard<'a>, node: NodeGuard<'a>, skip_self: bool) {
                 .borrow_mut()
                 .as_mut()
                 .unwrap()
-                .dirty(&node.key());
+                .mark_dirty(&node.key());
             mark_dirty0(graph, parent);
         }
     } else {
@@ -96,7 +96,7 @@ fn mark_dirty0<'a>(graph: GraphGuard<'a>, next: NodeGuard<'a>) {
         let parents = next.drain_clean_parents();
         for parent in parents {
             if let Some(v) = parent.anchor.borrow_mut().as_mut() {
-                v.dirty(&id);
+                v.mark_dirty(&id);
                 mark_dirty0(graph, parent);
             }
         }

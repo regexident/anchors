@@ -53,7 +53,7 @@ where
 {
     type Output = T;
 
-    fn dirty(&mut self, child: &<E::AnchorHandle as AnchorHandle>::Token) {
+    fn mark_dirty(&mut self, child: &<E::AnchorHandle as AnchorHandle>::Token) {
         panic!(
             "Constant never has any inputs; dirty should not have been called. alleged child: {:?}",
             child
