@@ -1,5 +1,6 @@
-use crate::expert::{Anchor, AnchorInner, Engine, OutputContext, Poll, UpdateContext};
 use std::panic::Location;
+
+use crate::expert::{Anchor, AnchorInner, Engine, OutputContext, Poll, UpdateContext};
 
 pub struct RefMap<A, F> {
     pub(super) f: F,

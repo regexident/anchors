@@ -1,6 +1,9 @@
-use anchors::expert::{MultiAnchor, Var};
-use anchors::singlethread::*;
 use std::cell::RefCell;
+
+use anchors::{
+    expert::{MultiAnchor, Var},
+    singlethread::*,
+};
 
 thread_local! {
     pub static ENGINE: RefCell<Engine> = RefCell::new(Engine::new());

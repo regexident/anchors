@@ -7,16 +7,19 @@
 //! likely somewhat more if single node has a significant number of parents or children.
 //! Hopefully this will significantly improve over the coming months.
 
+use std::{any::Any, cell::RefCell, panic::Location, rc::Rc};
+
+pub use crate::expert::MultiAnchor;
+use crate::expert::{AnchorInner, OutputContext, Poll, UpdateContext};
+
 mod generation;
 mod graph2;
 
-#[cfg(test)]
-mod test;
-
 use graph2::{Graph2, Graph2Guard, NodeGuard, NodeKey, RecalcState};
 
-pub use graph2::AnchorHandle;
-pub use graph2::NodeKey as AnchorToken;
+pub use graph2::{AnchorHandle, NodeKey as AnchorToken};
+
+use generation::Generation;
 
 /// The main struct of the Anchors library. Represents a single value on the `singlethread` recomputation graph.
 ///
@@ -26,16 +29,6 @@ pub type Anchor<T> = crate::expert::Anchor<T, Engine>;
 
 /// An Anchor input that can be mutated by calling a setter function from outside of the Anchors recomputation graph.
 pub type Var<T> = crate::expert::Var<T, Engine>;
-
-pub use crate::expert::MultiAnchor;
-
-use crate::expert::{AnchorInner, OutputContext, Poll, UpdateContext};
-
-use generation::Generation;
-use std::any::Any;
-use std::cell::RefCell;
-use std::panic::Location;
-use std::rc::Rc;
 
 thread_local! {
     static DEFAULT_MOUNTER: RefCell<Option<Mounter>> = RefCell::new(None);
@@ -512,3 +505,6 @@ impl AnchorDebugInfo {
         }
     }
 }
+
+#[cfg(test)]
+mod test;

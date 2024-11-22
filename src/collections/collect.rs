@@ -1,7 +1,8 @@
+use std::panic::Location;
+
 use crate::expert::{
     Anchor, AnchorHandle, AnchorInner, Engine, OutputContext, Poll, UpdateContext,
 };
-use std::panic::Location;
 
 impl<I: 'static + Clone, E: Engine> std::iter::FromIterator<Anchor<I, E>> for Anchor<Vec<I>, E> {
     fn from_iter<T>(iter: T) -> Self

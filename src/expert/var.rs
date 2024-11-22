@@ -1,8 +1,8 @@
+use std::{cell::RefCell, rc::Rc};
+
 use super::{
     Anchor, AnchorHandle, AnchorInner, DirtyHandle, Engine, OutputContext, Poll, UpdateContext,
 };
-use std::cell::RefCell;
-use std::rc::Rc;
 
 /// An Anchor type for values that are mutated by calling a setter function from outside of the Anchors recomputation graph.
 struct VarAnchor<T, E: Engine> {

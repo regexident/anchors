@@ -4,8 +4,16 @@
 //! you should never need to import things from here. `singlethread` should re-export anything
 //! you need to use `anchors`!
 
-use std::marker::PhantomData;
-use std::panic::Location;
+use std::{marker::PhantomData, panic::Location};
+
+pub(crate) mod constant;
+
+mod ext;
+mod var;
+
+pub use constant::Constant;
+pub use ext::{cutoff, map, map_mut, refmap, then, MultiAnchor};
+pub use var::Var;
 
 /// Indicates whether a value is ready for reading, and if it is, whether it's changed
 /// since the last read.
@@ -175,15 +183,3 @@ pub trait AnchorInner<E: Engine + ?Sized> {
         None
     }
 }
-
-mod ext;
-pub use ext::cutoff;
-pub use ext::map;
-pub use ext::map_mut;
-pub use ext::refmap;
-pub use ext::then;
-pub use ext::MultiAnchor;
-pub(crate) mod constant;
-mod var;
-pub use constant::Constant;
-pub use var::Var;
