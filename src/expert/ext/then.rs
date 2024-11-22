@@ -36,9 +36,9 @@ macro_rules! impl_tuple_then {
                 )+
             }
 
-            fn poll_updated<G: UpdateContext<Engine=E>>(
+            fn poll_updated(
                 &mut self,
-                ctx: &mut G,
+                ctx: &mut impl UpdateContext<Engine=E>,
             ) -> Poll {
                 if self.f_anchor.is_none() || self.lhs_stale {
                     let mut found_pending = false;
@@ -81,9 +81,9 @@ macro_rules! impl_tuple_then {
                 ctx.request(&self.f_anchor.as_ref().unwrap(), true)
             }
 
-            fn output<'slf, 'out, G: OutputContext<'out, Engine=E>>(
+            fn output<'slf, 'out>(
                 &'slf self,
-                ctx: &mut G,
+                ctx: &mut impl OutputContext<'out, Engine=E>,
             ) -> &'out Self::Output
             where
                 'slf: 'out,

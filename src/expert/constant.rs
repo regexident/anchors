@@ -47,7 +47,7 @@ impl<T: 'static, E: Engine> AnchorInner<E> for Constant<T> {
         )
     }
 
-    fn poll_updated<G: UpdateContext<Engine = E>>(&mut self, _ctx: &mut G) -> Poll {
+    fn poll_updated(&mut self, _ctx: &mut impl UpdateContext<Engine = E>) -> Poll {
         let res = if self.first_poll {
             Poll::Updated
         } else {
@@ -57,9 +57,9 @@ impl<T: 'static, E: Engine> AnchorInner<E> for Constant<T> {
         res
     }
 
-    fn output<'slf, 'out, G: OutputContext<'out, Engine = E>>(
+    fn output<'slf, 'out>(
         &'slf self,
-        _ctx: &mut G,
+        _ctx: &mut impl OutputContext<'out, Engine = E>,
     ) -> &'out Self::Output
     where
         'slf: 'out,
