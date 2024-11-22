@@ -46,7 +46,7 @@ impl Drop for AnchorHandle {
     }
 }
 
-impl crate::expert::AnchorHandle for AnchorHandle {
+impl crate::core::AnchorHandle for AnchorHandle {
     type Token = NodeKey;
 
     fn token(&self) -> NodeKey {

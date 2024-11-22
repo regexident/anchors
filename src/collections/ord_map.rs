@@ -1,6 +1,6 @@
 use im::{ordmap::DiffItem, OrdMap};
 
-use crate::expert::{Anchor, Engine};
+use crate::core::{Anchor, Engine};
 
 impl<E, K, V> Anchor<OrdMap<K, V>, E>
 where
@@ -90,7 +90,7 @@ mod test {
         let mut engine = crate::singlethread::Engine::new();
 
         let mut a_map = OrdMap::new();
-        let a = crate::expert::Var::new(a_map.clone());
+        let a = crate::core::Var::new(a_map.clone());
 
         let b = a.watch().inner_filter(|_, n| *n > 10);
         let b_map = engine.get(&b);
@@ -129,7 +129,7 @@ mod test {
         let mut engine = crate::singlethread::Engine::new();
 
         let mut a_map = OrdMap::new();
-        let a = crate::expert::Var::new(a_map.clone());
+        let a = crate::core::Var::new(a_map.clone());
 
         let b = a.watch().inner_map(|_, n| *n + 1);
         let b_map = engine.get(&b);

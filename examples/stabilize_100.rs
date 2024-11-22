@@ -1,5 +1,5 @@
 use anchors::{
-    expert::{Anchor, Var},
+    core::{Anchor, Var},
     singlethread::Engine,
 };
 

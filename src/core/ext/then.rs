@@ -1,8 +1,6 @@
 use std::panic::Location;
 
-use crate::expert::{
-    Anchor, AnchorHandle, AnchorInner, Engine, OutputContext, Poll, UpdateContext,
-};
+use crate::core::{Anchor, AnchorHandle, AnchorInner, Engine, OutputContext, Poll, UpdateContext};
 
 pub struct Then<A, Out, F, E: Engine> {
     pub(super) f: F,

@@ -1,10 +1,10 @@
-use crate::expert::MultiAnchor;
+use crate::core::MultiAnchor;
 
 #[test]
 fn test_cutoff_simple_observed() {
     let mut engine = crate::singlethread::Engine::new();
     let (v, v_setter) = {
-        let var = crate::expert::Var::new(100i32);
+        let var = crate::core::Var::new(100i32);
         (var.watch(), var)
     };
     let mut old_val = 0i32;
@@ -32,7 +32,7 @@ fn test_cutoff_simple_observed() {
 fn test_cutoff_simple_unobserved() {
     let mut engine = crate::singlethread::Engine::new();
     let (v, v_setter) = {
-        let var = crate::expert::Var::new(100i32);
+        let var = crate::core::Var::new(100i32);
         (var.watch(), var)
     };
     let mut old_val = 0i32;
@@ -62,7 +62,7 @@ fn test_refmap_simple() {
 
     let mut engine = crate::singlethread::Engine::new();
     let (v, _) = {
-        let var = crate::expert::Var::new((NoClone(1), NoClone(2)));
+        let var = crate::core::Var::new((NoClone(1), NoClone(2)));
         (var.watch(), var)
     };
     let a = v.refmap(|(a, _)| a);
@@ -77,7 +77,7 @@ fn test_refmap_simple() {
 fn test_split_simple() {
     let mut engine = crate::singlethread::Engine::new();
     let (v, _) = {
-        let var = crate::expert::Var::new((1usize, 2usize, 3usize));
+        let var = crate::core::Var::new((1usize, 2usize, 3usize));
         (var.watch(), var)
     };
     let (a, b, c) = v.split();
@@ -90,11 +90,11 @@ fn test_split_simple() {
 fn test_map_simple() {
     let mut engine = crate::singlethread::Engine::new();
     let (v1, _v1_setter) = {
-        let var = crate::expert::Var::new(1usize);
+        let var = crate::core::Var::new(1usize);
         (var.watch(), var)
     };
     let (v2, _v2_setter) = {
-        let var = crate::expert::Var::new(123usize);
+        let var = crate::core::Var::new(123usize);
         (var.watch(), var)
     };
     let _a2 = v1.map(|num1| {
@@ -113,15 +113,15 @@ fn test_map_simple() {
 fn test_then_simple() {
     let mut engine = crate::singlethread::Engine::new();
     let (v1, v1_setter) = {
-        let var = crate::expert::Var::new(true);
+        let var = crate::core::Var::new(true);
         (var.watch(), var)
     };
     let (v2, _v2_setter) = {
-        let var = crate::expert::Var::new(10usize);
+        let var = crate::core::Var::new(10usize);
         (var.watch(), var)
     };
     let (v3, _v3_setter) = {
-        let var = crate::expert::Var::new(20usize);
+        let var = crate::core::Var::new(20usize);
         (var.watch(), var)
     };
     let a = v1.then(move |val| if *val { v2.clone() } else { v3.clone() });
@@ -140,7 +140,7 @@ fn test_observed_marking() {
 
     let mut engine = crate::singlethread::Engine::new();
     let (v1, _v1_setter) = {
-        let var = crate::expert::Var::new(1usize);
+        let var = crate::core::Var::new(1usize);
         (var.watch(), var)
     };
     let a = v1.map(|num1| *num1 + 1);
@@ -180,7 +180,7 @@ fn test_observed_marking() {
 fn test_garbage_collection_wont_panic() {
     let mut engine = crate::singlethread::Engine::new();
     let (v1, _v1_setter) = {
-        let var = crate::expert::Var::new(1usize);
+        let var = crate::core::Var::new(1usize);
         (var.watch(), var)
     };
     engine.get(&v1);

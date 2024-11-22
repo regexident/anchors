@@ -11,9 +11,11 @@ pub(crate) mod constant;
 mod ext;
 mod var;
 
-pub use constant::Constant;
-pub use ext::{cutoff, map, map_mut, refmap, then, MultiAnchor};
-pub use var::Var;
+pub use self::{
+    constant::Constant,
+    ext::{cutoff, map, map_mut, refmap, then, MultiAnchor},
+    var::Var,
+};
 
 /// Indicates whether a value is ready for reading, and if it is, whether it's changed
 /// since the last read.
@@ -52,7 +54,7 @@ impl<O, E: Engine> Anchor<O, E> {
         self.data.token()
     }
 
-    pub fn new_from_expert(data: E::AnchorHandle) -> Self {
+    pub fn new_from_core(data: E::AnchorHandle) -> Self {
         Self {
             data,
             phantom: PhantomData,

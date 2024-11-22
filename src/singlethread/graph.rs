@@ -66,7 +66,7 @@ impl Graph {
     #[cfg(test)]
     pub(super) fn insert_testing(&self) -> AnchorHandle {
         self.insert(
-            Box::new(crate::expert::constant::Constant::new_raw_testing(123)),
+            Box::new(crate::core::constant::Constant::new_raw_testing(123)),
             AnchorDebugInfo {
                 location: None,
                 type_info: "testing dummy anchor",

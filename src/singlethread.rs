@@ -9,7 +9,7 @@
 
 use std::{cell::RefCell, rc::Rc};
 
-pub use crate::expert::MultiAnchor;
+pub use crate::core::MultiAnchor;
 
 mod anchor;
 mod anchor_handle;
@@ -34,12 +34,12 @@ use self::{anchor::*, context::*, context_mut::*, generation::*, node_iterator::
 
 /// The main struct of the Anchors library. Represents a single value on the `singlethread` recomputation graph.
 ///
-/// You should basically never need to create these with `Anchor::new_from_expert`; instead call functions like `Var::new` and `MultiAnchor::map`
+/// You should basically never need to create these with `Anchor::new_from_core`; instead call functions like `Var::new` and `MultiAnchor::map`
 /// to create them.
-pub type Anchor<T> = crate::expert::Anchor<T, Engine>;
+pub type Anchor<T> = crate::core::Anchor<T, Engine>;
 
 /// An Anchor input that can be mutated by calling a setter function from outside of the Anchors recomputation graph.
-pub type Var<T> = crate::expert::Var<T, Engine>;
+pub type Var<T> = crate::core::Var<T, Engine>;
 
 thread_local! {
     static DEFAULT_MOUNTER: RefCell<Option<Mounter>> = const { RefCell::new(None) };
@@ -110,7 +110,7 @@ pub struct DirtyHandle {
     dirty_marks: Rc<RefCell<Vec<NodeKey>>>,
 }
 
-impl crate::expert::DirtyHandle for DirtyHandle {
+impl crate::core::DirtyHandle for DirtyHandle {
     fn mark_dirty(&self) {
         self.dirty_marks.borrow_mut().push(self.key);
     }

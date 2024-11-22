@@ -1,4 +1,4 @@
-use crate::expert::{Poll, UpdateContext};
+use crate::core::{Poll, UpdateContext};
 
 use super::{
     Anchor, DirtyHandle, Engine, EngineContext, GraphGuard, NodeGuard, ObservedState, RecalcState,
