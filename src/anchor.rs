@@ -2,7 +2,9 @@ use std::marker::PhantomData;
 
 use crate::core::{AnchorHandle, Constant, Engine};
 
-/// The main struct of the Anchors library. Represents a single value on the recomputation graph.
+/// The main struct of the Anchors library.
+///
+/// Represents a single value on the recomputation graph.
 pub struct Anchor<O, E: Engine + ?Sized> {
     data: E::AnchorHandle,
     phantom: PhantomData<O>,

@@ -4,7 +4,7 @@ use crate::core::{AnchorCore, DirtyHandle as _, Engine as _, OutputContext, Poll
 
 use super::{Anchor, AnchorHandle, DirtyHandle, Engine};
 
-/// A setter that can update values inside an associated `VarAnchor`.
+/// A variable that exposes an anchor for its value.
 pub struct Var<T> {
     inner: Rc<RefCell<VarShared<T>>>,
     anchor: Anchor<T>,
