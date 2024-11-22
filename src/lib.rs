@@ -1,4 +1,4 @@
-pub mod collections;
+mod collections;
 pub mod core;
 pub mod singlethread;
 
