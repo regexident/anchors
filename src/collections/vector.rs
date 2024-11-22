@@ -6,7 +6,11 @@ use crate::expert::{
     Anchor, AnchorHandle, AnchorInner, Engine, OutputContext, Poll, UpdateContext,
 };
 
-impl<I: 'static + Clone, E: Engine> std::iter::FromIterator<Anchor<I, E>> for Anchor<Vector<I>, E> {
+impl<I, E> std::iter::FromIterator<Anchor<I, E>> for Anchor<Vector<I>, E>
+where
+    I: 'static + Clone,
+    E: Engine,
+{
     fn from_iter<T>(iter: T) -> Self
     where
         T: IntoIterator<Item = Anchor<I, E>>,
@@ -15,8 +19,10 @@ impl<I: 'static + Clone, E: Engine> std::iter::FromIterator<Anchor<I, E>> for An
     }
 }
 
-impl<'a, I: 'static + Clone, E: Engine> std::iter::FromIterator<&'a Anchor<I, E>>
-    for Anchor<Vector<I>, E>
+impl<'a, I, E> std::iter::FromIterator<&'a Anchor<I, E>> for Anchor<Vector<I>, E>
+where
+    I: 'static + Clone,
+    E: Engine,
 {
     fn from_iter<T>(iter: T) -> Self
     where
@@ -32,7 +38,11 @@ struct VectorCollect<T, E: Engine> {
     location: &'static Location<'static>,
 }
 
-impl<T: 'static + Clone, E: Engine> VectorCollect<T, E> {
+impl<T, E> VectorCollect<T, E>
+where
+    T: 'static + Clone,
+    E: Engine,
+{
     #[track_caller]
     pub fn new_anchor(anchors: Vector<Anchor<T, E>>) -> Anchor<Vector<T>, E> {
         E::mount(Self {
@@ -43,7 +53,11 @@ impl<T: 'static + Clone, E: Engine> VectorCollect<T, E> {
     }
 }
 
-impl<T: 'static + Clone, E: Engine> AnchorInner<E> for VectorCollect<T, E> {
+impl<T, E> AnchorInner<E> for VectorCollect<T, E>
+where
+    T: 'static + Clone,
+    E: Engine,
+{
     type Output = Vector<T>;
 
     fn dirty(&mut self, _edge: &<E::AnchorHandle as AnchorHandle>::Token) {

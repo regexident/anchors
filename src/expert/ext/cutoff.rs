@@ -10,10 +10,11 @@ pub struct Cutoff<A, F> {
     pub(super) location: &'static Location<'static>,
 }
 
-impl<F, In: 'static, E> AnchorInner<E> for Cutoff<(Anchor<In, E>,), F>
+impl<F, In, E> AnchorInner<E> for Cutoff<(Anchor<In, E>,), F>
 where
     E: Engine,
     F: for<'any> FnMut(&'any In) -> bool,
+    In: 'static,
 {
     type Output = In;
 

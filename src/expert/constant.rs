@@ -11,15 +11,24 @@ pub struct Constant<T> {
     location: &'static Location<'static>,
 }
 
-impl<T: 'static> Constant<T> {
+impl<T> Constant<T>
+where
+    T: 'static,
+{
     /// Creates a new Constant Anchor from some value.
     #[track_caller]
     #[deprecated]
-    pub fn new_anchor<E: Engine>(val: T) -> Anchor<T, E> {
+    pub fn new_anchor<E>(val: T) -> Anchor<T, E>
+    where
+        E: Engine,
+    {
         Self::new_internal(val)
     }
 
-    pub(crate) fn new_internal<E: Engine>(val: T) -> Anchor<T, E> {
+    pub(crate) fn new_internal<E>(val: T) -> Anchor<T, E>
+    where
+        E: Engine,
+    {
         E::mount(Self {
             val,
             first_poll: true,
@@ -37,7 +46,11 @@ impl<T: 'static> Constant<T> {
     }
 }
 
-impl<T: 'static, E: Engine> AnchorInner<E> for Constant<T> {
+impl<T, E> AnchorInner<E> for Constant<T>
+where
+    T: 'static,
+    E: Engine,
+{
     type Output = T;
 
     fn dirty(&mut self, child: &<E::AnchorHandle as AnchorHandle>::Token) {
