@@ -1,8 +1,6 @@
 use std::{iter::FromIterator, panic::Location};
 
-use crate::expert::{
-    Anchor, AnchorHandle, AnchorInner, Engine, OutputContext, Poll, UpdateContext,
-};
+use crate::core::{Anchor, AnchorHandle, AnchorInner, Engine, OutputContext, Poll, UpdateContext};
 
 impl<C, T, E> FromIterator<Anchor<T, E>> for Anchor<C, E>
 where

@@ -1,6 +1,6 @@
 use std::panic::Location;
 
-use crate::expert::{Anchor, AnchorInner, Engine, OutputContext, Poll, UpdateContext};
+use crate::core::{Anchor, AnchorInner, Engine, OutputContext, Poll, UpdateContext};
 
 pub struct MapMut<A, F, Out> {
     pub(super) f: F,
@@ -24,7 +24,7 @@ macro_rules! impl_tuple_map_mut {
         {
             type Output = Out;
 
-            fn mark_dirty(&mut self, _edge:  &<E::AnchorHandle as crate::expert::AnchorHandle>::Token) {
+            fn mark_dirty(&mut self, _edge:  &<E::AnchorHandle as crate::core::AnchorHandle>::Token) {
                 self.output_stale = true;
             }
 

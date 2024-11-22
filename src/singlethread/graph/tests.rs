@@ -196,7 +196,7 @@ fn test_insert_above_max_height() {
 
 #[test]
 fn test_free_list() {
-    use crate::expert::AnchorHandle;
+    use crate::core::AnchorHandle;
 
     let graph = Graph::new(10);
 

@@ -1,6 +1,6 @@
 use std::panic::Location;
 
-use crate::expert::{
+use crate::core::{
     Anchor, AnchorHandle, AnchorInner, Engine, OutputContext, Poll, UpdateContext,
 };
 

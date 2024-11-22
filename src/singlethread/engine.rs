@@ -1,6 +1,6 @@
 use std::{cell::RefCell, rc::Rc};
 
-use crate::expert::{AnchorInner, Poll};
+use crate::core::{AnchorInner, Poll};
 
 use super::{
     Anchor, AnchorHandle, DirtyHandle, EngineContext, EngineContextMut, Generation, GenericAnchor,
@@ -23,7 +23,7 @@ impl Default for Engine {
     }
 }
 
-impl crate::expert::Engine for Engine {
+impl crate::core::Engine for Engine {
     type AnchorHandle = AnchorHandle;
     type DirtyHandle = DirtyHandle;
 
@@ -35,7 +35,7 @@ impl crate::expert::Engine for Engine {
                 .expect("no engine was initialized. did you call `Engine::new()`?");
             let debug_info = inner.debug_info();
             let handle = this.graph.insert(Box::new(inner), debug_info);
-            Anchor::new_from_expert(handle)
+            Anchor::new_from_core(handle)
         })
     }
 }
