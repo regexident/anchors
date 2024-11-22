@@ -3,7 +3,7 @@ use std::{marker::PhantomData, rc::Rc};
 use super::node::NodePtr;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
-pub struct NodeKey {
+pub(super) struct NodeKey {
     pub(super) ptr: NodePtr,
     pub(super) token: u32,
     // Make type !Send + !Sync:

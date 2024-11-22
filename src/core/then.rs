@@ -24,10 +24,10 @@ macro_rules! impl_tuple_then {
         {
             type Output = Out;
 
-            fn mark_dirty(&mut self, edge: &<E::AnchorHandle as AnchorHandle>::Token) {
+            fn mark_dirty(&mut self, edge: <E::AnchorHandle as AnchorHandle>::AnchorKey) {
                 $(
                     // only invalidate f_anchor if one of the lhs anchors is invalidated
-                    if edge == &self.anchors.$num.token() {
+                    if edge == self.anchors.$num.key() {
                         self.lhs_stale = true;
                         return;
                     }

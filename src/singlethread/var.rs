@@ -77,7 +77,7 @@ where
 {
     type Output = T;
 
-    fn mark_dirty(&mut self, _edge: &<AnchorHandle as crate::core::AnchorHandle>::Token) {
+    fn mark_dirty(&mut self, _edge: <AnchorHandle as crate::core::AnchorHandle>::AnchorKey) {
         panic!("somehow an input was dirtied on VarAnchor; it never has any inputs to dirty")
     }
 

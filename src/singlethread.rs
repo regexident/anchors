@@ -26,11 +26,11 @@ mod node_key;
 mod node_ptrs;
 mod var;
 
-pub use self::{anchor_handle::*, engine::*, node_key::*, var::*};
+pub use self::{anchor_handle::*, engine::*, var::*};
 
 use self::{
     anchor::*, context::*, context_mut::*, generation::*, graph::*, graph_guard::*, node::*,
-    node_guard::*, node_iterator::*, node_ptrs::*,
+    node_guard::*, node_iterator::*, node_key::*, node_ptrs::*,
 };
 
 /// The main struct of the Anchors library. Represents a single value on the `singlethread` recomputation graph.
@@ -77,7 +77,7 @@ fn mark_dirty<'a>(graph: GraphGuard<'a>, node: NodeGuard<'a>, skip_self: bool) {
                 .borrow_mut()
                 .as_mut()
                 .unwrap()
-                .mark_dirty(&node.key());
+                .mark_dirty(AnchorKey::new(node.key()));
             mark_dirty0(graph, parent);
         }
     } else {
@@ -86,7 +86,7 @@ fn mark_dirty<'a>(graph: GraphGuard<'a>, node: NodeGuard<'a>, skip_self: bool) {
 }
 
 fn mark_dirty0<'a>(graph: GraphGuard<'a>, next: NodeGuard<'a>) {
-    let id = next.key();
+    let anchor_key = AnchorKey::new(next.key());
     if Engine::check_observed_raw(next) != ObservedState::Unnecessary {
         graph.queue_recalc(next);
     } else if graph::recalc_state(next) == RecalcState::Ready {
@@ -94,7 +94,7 @@ fn mark_dirty0<'a>(graph: GraphGuard<'a>, next: NodeGuard<'a>) {
         let parents = next.drain_clean_parents();
         for parent in parents {
             if let Some(v) = parent.anchor.borrow_mut().as_mut() {
-                v.mark_dirty(&id);
+                v.mark_dirty(anchor_key);
                 mark_dirty0(graph, parent);
             }
         }

@@ -2,10 +2,10 @@ use std::{any::Any, panic::Location};
 
 use crate::core::{AnchorCore, Poll};
 
-use super::{Engine, EngineContext, EngineContextMut, NodeKey};
+use super::{AnchorKey, Engine, EngineContext, EngineContextMut};
 
 pub(super) trait GenericAnchor {
-    fn mark_dirty(&mut self, child: &NodeKey);
+    fn mark_dirty(&mut self, child_key: AnchorKey);
 
     fn poll_updated(&mut self, ctx: &mut EngineContextMut<'_, '_>) -> Poll;
 
@@ -20,8 +20,8 @@ impl<I> GenericAnchor for I
 where
     I: 'static + AnchorCore<Engine>,
 {
-    fn mark_dirty(&mut self, child: &NodeKey) {
-        AnchorCore::mark_dirty(self, child)
+    fn mark_dirty(&mut self, child_key: AnchorKey) {
+        AnchorCore::mark_dirty(self, child_key)
     }
 
     fn poll_updated(&mut self, ctx: &mut EngineContextMut<'_, '_>) -> Poll {

@@ -24,7 +24,7 @@ macro_rules! impl_tuple_map_mut {
         {
             type Output = Out;
 
-            fn mark_dirty(&mut self, _edge:  &<E::AnchorHandle as crate::core::AnchorHandle>::Token) {
+            fn mark_dirty(&mut self, _edge: <E::AnchorHandle as crate::core::AnchorHandle>::AnchorKey) {
                 self.output_stale = true;
             }
 

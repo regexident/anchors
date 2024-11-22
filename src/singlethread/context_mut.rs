@@ -35,7 +35,7 @@ impl<'eng, 'gg> UpdateContext for EngineContextMut<'eng, 'gg> {
         O: 'static,
     {
         self.engine.with(|graph| {
-            let node = graph.get(anchor.token()).unwrap();
+            let node = graph.get(anchor.key().node_key).unwrap();
             if super::graph::recalc_state(node) != RecalcState::Ready {
                 panic!("attempted to get node that was not previously requested")
             }
@@ -55,7 +55,7 @@ impl<'eng, 'gg> UpdateContext for EngineContextMut<'eng, 'gg> {
     where
         O: 'static,
     {
-        let child = self.graph.get(anchor.token()).unwrap();
+        let child = self.graph.get(anchor.key().node_key).unwrap();
         let height_already_increased = match super::graph::ensure_height_increases(child, self.node)
         {
             Ok(v) => v,
@@ -92,7 +92,7 @@ impl<'eng, 'gg> UpdateContext for EngineContextMut<'eng, 'gg> {
     where
         O: 'static,
     {
-        let child = self.graph.get(anchor.token()).unwrap();
+        let child = self.graph.get(anchor.key().node_key).unwrap();
         self.node.remove_necessary_child(child);
         Engine::update_necessary_children(child);
     }

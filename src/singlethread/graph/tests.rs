@@ -204,9 +204,9 @@ fn test_free_list() {
     let b = graph.insert_testing();
     let c = graph.insert_testing();
 
-    let a_token = a.token();
-    let b_token = b.token();
-    let c_token = c.token();
+    let a_token = a.key();
+    let b_token = b.key();
+    let c_token = c.key();
 
     std::mem::drop(a);
     std::mem::drop(b);
@@ -217,11 +217,11 @@ fn test_free_list() {
     let a = graph.insert_testing();
     let d = graph.insert_testing();
 
-    assert_eq!(a.token(), a_token);
-    assert_eq!(b.token(), b_token);
-    assert_eq!(c.token(), c_token);
+    assert_eq!(a.key(), a_token);
+    assert_eq!(b.key(), b_token);
+    assert_eq!(c.key(), c_token);
 
-    let d_token = d.token();
+    let d_token = d.key();
 
     std::mem::drop(c);
     std::mem::drop(a);
@@ -233,8 +233,8 @@ fn test_free_list() {
     let a = graph.insert_testing();
     let c = graph.insert_testing();
 
-    assert_eq!(a.token(), a_token);
-    assert_eq!(b.token(), b_token);
-    assert_eq!(c.token(), c_token);
-    assert_eq!(d.token(), d_token);
+    assert_eq!(a.key(), a_token);
+    assert_eq!(b.key(), b_token);
+    assert_eq!(c.key(), c_token);
+    assert_eq!(d.key(), d_token);
 }
