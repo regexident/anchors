@@ -1,11 +1,12 @@
-use std::panic::Location;
+use std::{iter::FromIterator, panic::Location};
 
 use crate::expert::{
     Anchor, AnchorHandle, AnchorInner, Engine, OutputContext, Poll, UpdateContext,
 };
 
-impl<T, E> std::iter::FromIterator<Anchor<T, E>> for Anchor<Vec<T>, E>
+impl<C, T, E> FromIterator<Anchor<T, E>> for Anchor<C, E>
 where
+    C: 'static + FromIterator<T>,
     T: 'static + Clone,
     E: Engine,
 {
@@ -13,12 +14,13 @@ where
     where
         I: IntoIterator<Item = Anchor<T, E>>,
     {
-        VecCollect::new_anchor(iter.into_iter().collect())
+        Collect::new_anchor(iter.into_iter().collect())
     }
 }
 
-impl<'a, T, E> std::iter::FromIterator<&'a Anchor<T, E>> for Anchor<Vec<T>, E>
+impl<'a, C, T, E> FromIterator<&'a Anchor<T, E>> for Anchor<C, E>
 where
+    C: 'static + FromIterator<T>,
     T: 'static + Clone,
     E: Engine,
 {
@@ -26,23 +28,24 @@ where
     where
         I: IntoIterator<Item = &'a Anchor<T, E>>,
     {
-        VecCollect::new_anchor(iter.into_iter().cloned().collect())
+        Collect::new_anchor(iter.into_iter().cloned().collect())
     }
 }
 
-struct VecCollect<T, E: Engine> {
+struct Collect<C, T, E: Engine> {
     anchors: Vec<Anchor<T, E>>,
-    vals: Option<Vec<T>>,
+    vals: Option<C>,
     location: &'static Location<'static>,
 }
 
-impl<T, E> VecCollect<T, E>
+impl<C, T, E> Collect<C, T, E>
 where
+    C: 'static + FromIterator<T>,
     T: 'static + Clone,
     E: Engine,
 {
     #[track_caller]
-    pub fn new_anchor(anchors: Vec<Anchor<T, E>>) -> Anchor<Vec<T>, E> {
+    pub fn new_anchor(anchors: Vec<Anchor<T, E>>) -> Anchor<C, E> {
         E::mount(Self {
             anchors,
             vals: None,
@@ -51,12 +54,13 @@ where
     }
 }
 
-impl<T, E> AnchorInner<E> for VecCollect<T, E>
+impl<C, T, E> AnchorInner<E> for Collect<C, T, E>
 where
+    C: 'static + FromIterator<T>,
     T: 'static + Clone,
     E: Engine,
 {
-    type Output = Vec<T>;
+    type Output = C;
 
     fn dirty(&mut self, _edge: &<E::AnchorHandle as AnchorHandle>::Token) {
         self.vals = None;
@@ -92,7 +96,7 @@ where
     }
 
     fn debug_location(&self) -> Option<(&'static str, &'static Location<'static>)> {
-        Some(("VecCollect", self.location))
+        Some(("Collect", self.location))
     }
 }
 
