@@ -1,4 +1,4 @@
-use std::{cell::RefCell, rc::Rc};
+use std::{cell::RefCell, panic::Location, rc::Rc};
 
 use crate::core::{AnchorCore, DirtyHandle as _, Engine as _, OutputContext, Poll, UpdateContext};
 
@@ -24,6 +24,7 @@ where
     T: 'static,
 {
     /// Creates a new variable
+    #[track_caller]
     pub fn new(value: T) -> Variable<T> {
         let value = Rc::new(value);
         let inner = Rc::new(RefCell::new(VarShared {
@@ -33,7 +34,11 @@ where
         }));
         Variable {
             inner: inner.clone(),
-            anchor: Engine::mount(VarAnchor { inner, value }),
+            anchor: Engine::mount(VarAnchor {
+                inner,
+                value,
+                location: Location::caller(),
+            }),
         }
     }
 
@@ -69,6 +74,7 @@ struct VarShared<T> {
 struct VarAnchor<T> {
     inner: Rc<RefCell<VarShared<T>>>,
     value: Rc<T>,
+    location: &'static Location<'static>,
 }
 
 impl<T> AnchorCore<Engine> for VarAnchor<T>
@@ -105,5 +111,9 @@ where
         'slf: 'out,
     {
         &self.value
+    }
+
+    fn debug_location(&self) -> Option<(&'static str, &'static Location<'static>)> {
+        Some(("Variable", self.location))
     }
 }

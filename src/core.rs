@@ -8,14 +8,13 @@ use std::{fmt::Debug, hash::Hash, panic::Location};
 
 use crate::Anchor;
 
-mod constant;
 mod cutoff;
 mod map;
 mod map_mut;
 mod refmap;
 mod then;
 
-pub use self::{constant::*, cutoff::*, map::*, map_mut::*, refmap::*, then::*};
+pub use self::{cutoff::*, map::*, map_mut::*, refmap::*, then::*};
 
 /// Indicates whether a value is ready for reading, and if it is, whether it's changed
 /// since the last read.
@@ -77,7 +76,7 @@ pub trait OutputContext<'eng> {
 
     /// If another Anchor during polling indicated its value was ready, the previously
     /// calculated value can be accessed with this method. Its implementation is virtually
-    /// identical to `UpdateContext`'s `get`. This is mostly used by AnchorCore implementations
+    /// identical to `UpdateContext`'s `get`. This is mostly used by `AnchorCore`'s implementations
     /// that want to return a reference to some other Anchor's output without cloning.
     fn get<'out, O>(&self, anchor: &Anchor<O, Self::Engine>) -> &'out O
     where

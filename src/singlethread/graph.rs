@@ -64,11 +64,16 @@ impl Graph {
     }
 
     #[cfg(test)]
+    #[track_caller]
     pub(super) fn insert_testing(&self) -> AnchorHandle {
-        use crate::core::Constant;
+        use std::panic::Location;
+
+        use crate::singlethread::ConstAnchor;
+
+        let anchor = ConstAnchor::new(Rc::new(123), Location::caller());
 
         self.insert(
-            Box::new(Constant::new_raw_testing(123)),
+            Box::new(anchor),
             AnchorDebugInfo {
                 location: None,
                 type_info: "testing dummy anchor",

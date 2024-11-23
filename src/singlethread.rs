@@ -7,6 +7,7 @@ use std::{cell::RefCell, rc::Rc};
 
 mod anchor;
 mod anchor_handle;
+mod constant;
 mod context;
 mod context_mut;
 mod engine;
@@ -20,7 +21,7 @@ mod node_key;
 mod node_ptrs;
 mod variable;
 
-pub use self::{anchor_handle::*, engine::*, variable::*};
+pub use self::{anchor_handle::*, constant::*, engine::*, variable::*};
 
 use self::{
     anchor::*, context::*, context_mut::*, generation::*, graph::*, graph_guard::*, node::*,

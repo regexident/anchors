@@ -2,7 +2,18 @@ use std::{any::Any, panic::Location};
 
 use crate::core::{AnchorCore, Poll};
 
-use super::{AnchorKey, Engine, EngineContext, EngineContextMut};
+use super::{Anchor, AnchorKey, Constant, Engine, EngineContext, EngineContextMut};
+
+impl<T> Anchor<T> {
+    /// A constant value's anchor without a corresponding `Constant`.
+    #[track_caller]
+    pub fn constant(value: T) -> Self
+    where
+        T: 'static,
+    {
+        Constant::new(value).into_anchor()
+    }
+}
 
 pub(super) trait GenericAnchor {
     fn mark_dirty(&mut self, child_key: AnchorKey);

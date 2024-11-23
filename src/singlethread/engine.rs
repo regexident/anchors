@@ -32,8 +32,8 @@ impl crate::core::Engine for Engine {
         I: 'static + AnchorCore<Self>,
     {
         DEFAULT_MOUNTER.with(|default_mounter| {
-            let mut borrow1 = default_mounter.borrow_mut();
-            let this = borrow1
+            let mut borrow = default_mounter.borrow_mut();
+            let this = borrow
                 .as_mut()
                 .expect("no engine was initialized. did you call `Engine::new()`?");
             let debug_info = inner.debug_info();

@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::core::{AnchorHandle, Constant, Engine};
+use crate::core::{AnchorHandle, Engine};
 
 mod multi;
 
@@ -15,14 +15,6 @@ pub struct Anchor<O, E: Engine + ?Sized> {
 }
 
 impl<O, E: Engine> Anchor<O, E> {
-    #[track_caller]
-    pub fn constant(value: O) -> Self
-    where
-        O: 'static,
-    {
-        Constant::new_internal(value)
-    }
-
     /// Returns the immutable, copyable, hashable, comparable engine-specific ID for this Anchor.
     pub fn key(&self) -> <E::AnchorHandle as AnchorHandle>::AnchorKey {
         self.data.key()
