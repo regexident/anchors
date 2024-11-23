@@ -2,6 +2,13 @@ use std::panic::Location;
 
 use crate::core::{Anchor, AnchorCore, AnchorHandle, Engine, OutputContext, Poll, UpdateContext};
 
+/// A core anchor that maps a number of incremental input values to some output Anchor.
+///
+/// With `then`, your computation graph can dynamically select an Anchor to recalculate based
+/// on some other incremental computation.
+///
+/// The function `f` accepts inputs as references, and must return an owned `Anchor`.
+/// `f` will always be recalled any time any input value changes.
 pub struct Then<A, Out, F, E: Engine> {
     pub(super) anchors: A,
     pub(super) f: F,

@@ -2,6 +2,16 @@ use std::panic::Location;
 
 use crate::core::{Anchor, AnchorCore, AnchorHandle, Engine, OutputContext, Poll, UpdateContext};
 
+/// A core anchor that outputs its input.
+///
+/// However, even if a value changes you may not want to recompute downstream nodes
+/// unless the value changes substantially.
+///
+/// The function `f` accepts inputs as references, and must return true if Anchors that derive
+/// values from this cutoff should recalculate, or false if derivative Anchors should not recalculate.
+///
+/// If this is the first calculation, `f` will be called, but return values of `false` will be ignored.
+/// `f` will always be recalled any time the input value changes.
 pub struct Cutoff<A, F> {
     pub(super) anchors: A,
     pub(super) f: F,

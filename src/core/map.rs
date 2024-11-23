@@ -2,6 +2,10 @@ use std::panic::Location;
 
 use crate::core::{Anchor, AnchorCore, AnchorHandle, Engine, OutputContext, Poll, UpdateContext};
 
+/// A core anchor that maps a number of incremental input values to some output value.
+///
+/// The function `f` accepts inputs as references, and must return an owned value.
+/// `f` will always be recalled any time any input value changes.
 pub struct Map<A, F, Out> {
     pub(super) anchors: A,
     pub(super) f: F,

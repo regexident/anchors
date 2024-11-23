@@ -2,6 +2,14 @@ use std::panic::Location;
 
 use crate::core::{Anchor, AnchorCore, Engine, OutputContext, Poll, UpdateContext};
 
+// A core anchor that maps some input reference to some output reference.
+///
+/// Performance is critical here: `f` will always be recalled any time any downstream node
+/// requests the value of this Anchor, *not* just when an input value changes.
+///
+/// Important: Due to constraints with Rust's lifetime system,
+/// these output references can not be owned values, and must
+/// live exactly as long as the input reference.
 pub struct RefMap<A, F> {
     pub(super) anchors: A,
     pub(super) f: F,
