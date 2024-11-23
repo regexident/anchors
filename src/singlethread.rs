@@ -21,18 +21,12 @@ mod node_key;
 mod node_ptrs;
 mod variable;
 
-pub use self::{anchor_handle::*, constant::*, engine::*, variable::*};
+pub use self::{anchor::*, anchor_handle::*, constant::*, engine::*, variable::*};
 
 use self::{
-    anchor::*, context::*, context_mut::*, generation::*, graph::*, graph_guard::*, node::*,
-    node_guard::*, node_iterator::*, node_key::*, node_ptrs::*,
+    context::*, context_mut::*, generation::*, graph::*, graph_guard::*, node::*, node_guard::*,
+    node_iterator::*, node_key::*, node_ptrs::*,
 };
-
-/// The main struct of the Anchors library. Represents a single value on the `singlethread` recomputation graph.
-///
-/// You should basically never need to create these with `Anchor::new_from_core`; instead call functions like `Var::new` and `MultiAnchor::map`
-/// to create them.
-pub type Anchor<T> = crate::Anchor<T, Engine>;
 
 thread_local! {
     static DEFAULT_MOUNTER: RefCell<Option<Mounter>> = const { RefCell::new(None) };

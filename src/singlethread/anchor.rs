@@ -2,7 +2,15 @@ use std::{any::Any, panic::Location};
 
 use crate::core::{AnchorCore, Poll};
 
-use super::{Anchor, AnchorKey, Constant, Engine, EngineContext, EngineContextMut};
+use super::{AnchorKey, Constant, Engine, EngineContext, EngineContextMut};
+
+/// The main struct of the Anchors library.
+///
+/// Represents a single value on the `singlethread` recomputation graph.
+///
+/// You should basically never need to create these with `Anchor::new_from_core`;
+/// instead call functions like `Variable::new`, `Constant::new` and `MultiAnchor::map` to create them.
+pub type Anchor<T> = crate::Anchor<T, Engine>;
 
 impl<T> Anchor<T> {
     /// A constant value's anchor without a corresponding `Constant`.

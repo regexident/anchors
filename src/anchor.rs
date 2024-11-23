@@ -6,7 +6,7 @@ mod multi;
 
 pub use self::multi::*;
 
-/// The main struct of the Anchors library.
+/// The main struct of the `anchors`` crate.
 ///
 /// Represents a single value on the recomputation graph.
 pub struct Anchor<O, E: Engine + ?Sized> {
