@@ -4,7 +4,7 @@ use super::Variable;
 
 #[test]
 fn test_cutoff_simple_observed() {
-    let mut engine = crate::singlethread::Engine::new();
+    let mut engine = crate::single_threaded::Engine::new();
     let (v, v_setter) = {
         let var = Variable::new(100i32);
         (var.watch(), var)
@@ -32,7 +32,7 @@ fn test_cutoff_simple_observed() {
 
 #[test]
 fn test_cutoff_simple_unobserved() {
-    let mut engine = crate::singlethread::Engine::new();
+    let mut engine = crate::single_threaded::Engine::new();
     let (v, v_setter) = {
         let var = Variable::new(100i32);
         (var.watch(), var)
@@ -62,7 +62,7 @@ fn test_refmap_simple() {
     #[derive(PartialEq, Debug)]
     struct NoClone(usize);
 
-    let mut engine = crate::singlethread::Engine::new();
+    let mut engine = crate::single_threaded::Engine::new();
     let (v, _) = {
         let var = Variable::new((NoClone(1), NoClone(2)));
         (var.watch(), var)
@@ -77,7 +77,7 @@ fn test_refmap_simple() {
 
 #[test]
 fn test_split_simple() {
-    let mut engine = crate::singlethread::Engine::new();
+    let mut engine = crate::single_threaded::Engine::new();
     let (v, _) = {
         let var = Variable::new((1usize, 2usize, 3usize));
         (var.watch(), var)
@@ -90,7 +90,7 @@ fn test_split_simple() {
 
 #[test]
 fn test_map_simple() {
-    let mut engine = crate::singlethread::Engine::new();
+    let mut engine = crate::single_threaded::Engine::new();
     let (v1, _v1_setter) = {
         let var = Variable::new(1usize);
         (var.watch(), var)
@@ -113,7 +113,7 @@ fn test_map_simple() {
 
 #[test]
 fn test_then_simple() {
-    let mut engine = crate::singlethread::Engine::new();
+    let mut engine = crate::single_threaded::Engine::new();
     let (v1, v1_setter) = {
         let var = Variable::new(true);
         (var.watch(), var)
@@ -138,9 +138,9 @@ fn test_then_simple() {
 
 #[test]
 fn test_observed_marking() {
-    use crate::singlethread::ObservedState;
+    use crate::single_threaded::ObservedState;
 
-    let mut engine = crate::singlethread::Engine::new();
+    let mut engine = crate::single_threaded::Engine::new();
     let (v1, _v1_setter) = {
         let var = Variable::new(1usize);
         (var.watch(), var)
@@ -180,7 +180,7 @@ fn test_observed_marking() {
 
 #[test]
 fn test_garbage_collection_wont_panic() {
-    let mut engine = crate::singlethread::Engine::new();
+    let mut engine = crate::single_threaded::Engine::new();
     let (v1, _v1_setter) = {
         let var = Variable::new(1usize);
         (var.watch(), var)
@@ -194,7 +194,7 @@ fn test_garbage_collection_wont_panic() {
 fn test_readme_example() {
     // example
     use crate::{
-        singlethread::{Engine, Variable},
+        single_threaded::{Engine, Variable},
         MultiAnchor,
     };
     let mut engine = Engine::new();

@@ -87,7 +87,7 @@ mod test {
 
     #[test]
     fn test_filter() {
-        use crate::singlethread::{Engine, Variable};
+        use crate::single_threaded::{Engine, Variable};
 
         let mut engine = Engine::new();
 
@@ -128,7 +128,7 @@ mod test {
 
     #[test]
     fn test_map() {
-        use crate::singlethread::{Engine, Variable};
+        use crate::single_threaded::{Engine, Variable};
 
         let mut engine = Engine::new();
 

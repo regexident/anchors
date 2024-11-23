@@ -1,5 +1,5 @@
 use anchors::{
-    singlethread::{Engine, Variable},
+    single_threaded::{Engine, Variable},
     Anchor,
 };
 

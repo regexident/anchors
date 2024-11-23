@@ -57,7 +57,7 @@ where
     /// This method is mirrored by [MultiAnchor::map].
     ///
     /// ```
-    /// use anchors::{MultiAnchor, singlethread::*};
+    /// use anchors::{MultiAnchor, single_threaded::*};
     ///
     /// let mut engine = Engine::new();
     /// let a = Anchor::constant(1);
@@ -99,7 +99,7 @@ where
     /// This method is mirrored by [MultiAnchor::then].
     ///
     /// ```
-    /// use anchors::{MultiAnchor, singlethread::*};
+    /// use anchors::{MultiAnchor, single_threaded::*};
     ///
     /// let mut engine = Engine::new();
     /// let decision = Anchor::constant(true);
@@ -141,7 +141,7 @@ where
     /// This method is mirrored by [MultiAnchor::refmap].
     ///
     /// ```
-    /// use anchors::{MultiAnchor, singlethread::*};
+    /// use anchors::{MultiAnchor, single_threaded::*};
     ///
     /// struct CantClone {val: usize};
     /// let mut engine = Engine::new();
@@ -179,7 +179,7 @@ where
     /// This method is mirrored by [MultiAnchor::cutoff].
     ///
     /// ```
-    /// use anchors::{MultiAnchor, singlethread::*};
+    /// use anchors::{MultiAnchor, single_threaded::*};
     ///
     /// let mut engine = Engine::new();
     /// let num = Variable::new(1i32);

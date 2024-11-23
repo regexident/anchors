@@ -103,7 +103,7 @@ where
 
 #[cfg(test)]
 mod test {
-    use crate::singlethread::*;
+    use crate::single_threaded::*;
 
     #[test]
     fn collect() {
