@@ -50,7 +50,8 @@ where
     O1: 'static,
     E: Engine,
 {
-    /// Creates an Anchor that maps a number of incremental input values to some output value.
+    /// Creates an anchor that maps a number of incremental input values to some output value.
+    ///
     /// The function `f` accepts inputs as references, and must return an owned value.
     /// `f` will always be recalled any time any input value changes.
     ///
@@ -90,9 +91,11 @@ where
         E::mount(MapMut::new((self.clone(),), f, Location::caller(), initial))
     }
 
-    /// Creates an Anchor that maps a number of incremental input values to some output Anchor.
+    /// Creates an anchor that maps a number of incremental input values to some output Anchor.
+    ///
     /// With `then`, your computation graph can dynamically select an Anchor to recalculate based
     /// on some other incremental computation.
+    ///
     /// The function `f` accepts inputs as references, and must return an owned `Anchor`.
     /// `f` will always be recalled any time any input value changes.
     ///
@@ -131,11 +134,13 @@ where
         E::mount(Then::new((self.clone(),), f, Location::caller()))
     }
 
-    /// Creates an Anchor that maps some input reference to some output reference.
+    /// Creates an anchor that maps some input reference to some output reference.
+    ///
     /// Performance is critical here: `f` will always be recalled any time any downstream node
     /// requests the value of this Anchor, *not* just when an input value changes.
-    /// It's also critical to note that due to constraints
-    /// with Rust's lifetime system, these output references can not be owned values, and must
+    ///
+    /// Important: Due to constraints with Rust's lifetime system,
+    /// these output references can not be owned values, and must
     /// live exactly as long as the input reference.
     ///
     /// This method is mirrored by [MultiAnchor::refmap].
@@ -169,10 +174,14 @@ where
         E::mount(RefMap::new((self.clone(),), f, Location::caller()))
     }
 
-    /// Creates an Anchor that outputs its input. However, even if a value changes
-    /// you may not want to recompute downstream nodes unless the value changes substantially.
+    /// Creates an anchor that outputs its input.
+    ///
+    /// However, even if a value changes you may not want to recompute downstream nodes
+    /// unless the value changes substantially.
+    ///
     /// The function `f` accepts inputs as references, and must return true if Anchors that derive
     /// values from this cutoff should recalculate, or false if derivative Anchors should not recalculate.
+    ///
     /// If this is the first calculation, `f` will be called, but return values of `false` will be ignored.
     /// `f` will always be recalled any time the input value changes.
     ///
