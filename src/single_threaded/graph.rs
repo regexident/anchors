@@ -68,7 +68,7 @@ impl Graph {
     pub(super) fn insert_testing(&self) -> AnchorHandle {
         use std::panic::Location;
 
-        use crate::singlethread::ConstAnchor;
+        use crate::single_threaded::ConstAnchor;
 
         let anchor = ConstAnchor::new(Rc::new(123), Location::caller());
 

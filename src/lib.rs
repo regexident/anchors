@@ -1,6 +1,6 @@
 mod collections;
 pub mod core;
-pub mod singlethread;
+pub mod single_threaded;
 
 mod anchor;
 mod arena;

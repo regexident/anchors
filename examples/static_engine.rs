@@ -1,6 +1,6 @@
 use std::cell::RefCell;
 
-use anchors::singlethread::*;
+use anchors::single_threaded::*;
 
 thread_local! {
     pub static ENGINE: RefCell<Engine> = RefCell::new(Engine::new());

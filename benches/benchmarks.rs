@@ -1,4 +1,4 @@
-use anchors::singlethread::{Engine, Variable};
+use anchors::single_threaded::{Engine, Variable};
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
 
 fn stabilize_linear_nodes_simple(c: &mut Criterion) {

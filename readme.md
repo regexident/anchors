@@ -13,7 +13,7 @@
 ## Example
 
 ```rust
-use crate::singlethread::*;
+use crate::single_threaded::*;
 let mut engine = Engine::new();
 
 // create a couple `Variable`s

@@ -6,7 +6,7 @@ use super::{AnchorKey, Constant, Engine, EngineContext, EngineContextMut};
 
 /// The main struct of the Anchors library.
 ///
-/// Represents a single value on the `singlethread` recomputation graph.
+/// Represents a single value on the `single_threaded` recomputation graph.
 ///
 /// You should basically never need to create these with `Anchor::new_from_core`;
 /// instead call functions like `Variable::new`, `Constant::new` and `MultiAnchor::map` to create them.
