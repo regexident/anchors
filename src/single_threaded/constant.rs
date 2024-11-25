@@ -13,7 +13,7 @@ pub struct Constant<T> {
 impl<T> Clone for Constant<T> {
     fn clone(&self) -> Self {
         Self {
-            value: self.value.clone(),
+            value: Rc::clone(&self.value),
             anchor: self.anchor.clone(),
         }
     }
@@ -35,7 +35,7 @@ where
 
     /// Retrieves the value
     pub fn get(&self) -> Rc<T> {
-        self.value.clone()
+        Rc::clone(&self.value)
     }
 
     pub fn watch(&self) -> Anchor<T> {

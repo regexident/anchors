@@ -53,7 +53,7 @@ impl Engine {
     pub fn new_with_max_height(max_height: usize) -> Self {
         let graph = Rc::new(Graph::new(max_height));
         let mounter = Mounter {
-            graph: graph.clone(),
+            graph: Rc::clone(&graph),
         };
         DEFAULT_MOUNTER.with(|v| *v.borrow_mut() = Some(mounter));
         Self {
@@ -148,7 +148,7 @@ impl Engine {
 
         DirtyHandle {
             key,
-            dirty_marks: self.dirty_marks.clone(),
+            dirty_marks: Rc::clone(&self.dirty_marks),
         }
     }
 

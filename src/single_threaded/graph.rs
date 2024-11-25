@@ -135,7 +135,7 @@ impl Graph {
                 nodes.insert(node)
             };
             let num = NodeKey::new(unsafe { ptr.make_ptr() }, self.token);
-            AnchorHandle::new(num, self.still_alive.clone())
+            AnchorHandle::new(num, Rc::clone(&self.still_alive))
         })
     }
 }
