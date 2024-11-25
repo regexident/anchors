@@ -40,7 +40,7 @@ impl Clone for AnchorHandle {
         }
         AnchorHandle {
             node_key: self.node_key,
-            still_alive: self.still_alive.clone(),
+            still_alive: Rc::clone(&self.still_alive),
         }
     }
 }

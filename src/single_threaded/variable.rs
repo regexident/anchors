@@ -13,7 +13,7 @@ pub struct Variable<T> {
 impl<T> Clone for Variable<T> {
     fn clone(&self) -> Self {
         Self {
-            inner: self.inner.clone(),
+            inner: Rc::clone(&self.inner),
             anchor: self.anchor.clone(),
         }
     }
@@ -29,11 +29,11 @@ where
         let value = Rc::new(value);
         let inner = Rc::new(RefCell::new(VarShared {
             dirty_handle: None,
-            value: value.clone(),
+            value: Rc::clone(&value),
             value_changed: true,
         }));
         Variable {
-            inner: inner.clone(),
+            inner: Rc::clone(&inner),
             anchor: Engine::mount(VarAnchor {
                 inner,
                 value,
@@ -55,7 +55,7 @@ where
 
     /// Retrieves the last value set
     pub fn get(&self) -> Rc<T> {
-        self.inner.borrow().value.clone()
+        Rc::clone(&self.inner.borrow().value)
     }
 
     pub fn watch(&self) -> Anchor<T> {
@@ -94,7 +94,7 @@ where
             inner.dirty_handle = Some(ctx.dirty_handle());
         }
         let res = if inner.value_changed {
-            self.value = inner.value.clone();
+            self.value = Rc::clone(&inner.value);
             Poll::Updated
         } else {
             Poll::Unchanged
