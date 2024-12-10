@@ -51,7 +51,7 @@ impl<'a> Iterator for RefCellVecIterator<'a> {
     }
 }
 
-impl<'a> Drop for RefCellVecIterator<'a> {
+impl Drop for RefCellVecIterator<'_> {
     fn drop(&mut self) {
         if self.empty_on_drop {
             self.inside.clear()

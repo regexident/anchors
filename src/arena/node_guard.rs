@@ -23,7 +23,7 @@ impl<N> PartialEq for NodeGuard<'_, N> {
 
 impl<N> Eq for NodeGuard<'_, N> {}
 
-impl<'gg, N> Deref for NodeGuard<'gg, N> {
+impl<N> Deref for NodeGuard<'_, N> {
     type Target = N;
 
     fn deref(&self) -> &N {
