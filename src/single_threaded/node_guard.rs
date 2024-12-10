@@ -5,7 +5,7 @@ use super::{node::Node, NodeKey, RefCellVecIterator};
 #[derive(Copy, Clone, Debug)]
 pub(super) struct NodeGuard<'a>(pub(super) arena::NodeGuard<'a, Node>);
 
-impl<'a> std::ops::Deref for NodeGuard<'a> {
+impl std::ops::Deref for NodeGuard<'_> {
     type Target = Node;
 
     fn deref(&self) -> &Node {
@@ -13,7 +13,7 @@ impl<'a> std::ops::Deref for NodeGuard<'a> {
     }
 }
 
-impl<'a> PartialEq for NodeGuard<'a> {
+impl PartialEq for NodeGuard<'_> {
     fn eq(&self, other: &Self) -> bool {
         self.0 == other.0
     }

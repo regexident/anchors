@@ -26,7 +26,7 @@ impl<'eng, 'gg> EngineContextMut<'eng, 'gg> {
     }
 }
 
-impl<'eng, 'gg> UpdateContext for EngineContextMut<'eng, 'gg> {
+impl UpdateContext for EngineContextMut<'_, '_> {
     type Engine = Engine;
 
     fn get<'out, 'slf, O>(&'slf self, anchor: &Anchor<O>) -> &'out O
